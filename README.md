@@ -6,8 +6,8 @@ This repository contains the static one-page website for Anchor Support Service 
 - `index.html`
 - `styles.css`
 - `script.js`
-- `assets/images/anchor-logo.png`
-- `assets/images/alex-ceo-picture.png`
+- `anchor-logo.png`
+- `alex-ceo-picture.png`
 
 ## Deploy on GitHub Pages
 1. Push this repository to GitHub.

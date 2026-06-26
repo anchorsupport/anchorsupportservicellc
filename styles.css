@@ -82,14 +82,28 @@ textarea {
 }
 
 .site-logo {
-  height: 82px;
+  height: 72px;
   width: auto;
-  max-width: 240px;
+  max-width: 230px;
   object-fit: contain;
   display: block;
   background: #ffffff;
   border-radius: 10px;
   padding: 6px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+}
+
+.site-header,
+.nav-inner,
+.site-nav {
+  min-height: 88px;
 }
 
 .brand-text {
@@ -111,12 +125,19 @@ textarea {
 
 @media (max-width: 768px) {
   .site-logo {
-    height: 46px;
-    max-width: 210px;
+    height: 54px;
+    max-width: 180px;
+    padding: 4px;
   }
 
   .brand {
     gap: 0.6rem;
+  }
+
+  .site-header,
+  .nav-inner,
+  .site-nav {
+    min-height: 72px;
   }
 
   .brand-text strong {
@@ -175,6 +196,19 @@ textarea {
 
 .hero-card h2 {
   font-size: 1.4rem;
+}
+
+.provider-ready-card {
+  background: linear-gradient(135deg, var(--deep-navy), var(--teal));
+  color: var(--white);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 18px 45px rgba(0, 40, 70, 0.18);
+}
+
+.provider-ready-card h3,
+.provider-ready-card p {
+  color: var(--white);
 }
 
 .hero-card h2 {
