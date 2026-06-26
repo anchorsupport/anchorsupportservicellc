@@ -19,3 +19,5 @@ This repository contains the static one-page website for Anchor Support Service 
 - The site is built with plain HTML, CSS, and JavaScript.
 - Navigation and mobile menu behavior are included in `script.js`.
 - The team section uses a initials placeholder for Scotty until a real photo is available.
+
+When the custom domain is ready, add a CNAME file in the repo root containing the final domain.
