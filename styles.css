@@ -421,6 +421,11 @@ textarea {
   border: 1px solid rgba(0, 51, 95, 0.15);
 }
 
+.button-form {
+  background: #0d7377;
+  color: var(--white);
+}
+
 .hero-highlights {
   display: grid;
   gap: 1rem;
