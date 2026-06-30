@@ -645,6 +645,7 @@ textarea {
 .team-card {
   position: relative;
   overflow: hidden;
+  min-width: 0;
 }
 
 .team-card-top {
@@ -675,8 +676,10 @@ textarea {
 .team-photo {
   width: 132px;
   height: 132px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   object-fit: cover;
+  object-position: center;
   border: 5px solid rgba(26, 166, 166, 0.22);
   box-shadow: 0 12px 28px rgba(0, 40, 70, 0.18);
 }
@@ -685,6 +688,18 @@ textarea {
   .team-photo {
     width: 112px;
     height: 112px;
+  }
+
+  .team-grid {
+    gap: 20px;
+  }
+
+  .team-card {
+    padding: 1.5rem;
+  }
+
+  .team-hero {
+    margin: 0.75rem 0 1rem;
   }
 }
 
@@ -701,6 +716,12 @@ textarea {
 
 .team-card h3 {
   margin-top: 0;
+}
+
+.team-role {
+  color: var(--navy);
+  font-weight: 800;
+  margin: -0.25rem 0 0.75rem;
 }
 
 .support-grid {
@@ -925,5 +946,15 @@ textarea {
 
   .footer-grid {
     grid-template-columns: 1fr;
+  }
+
+  .team-card {
+    padding: 1.35rem;
+  }
+
+  .team-card h3,
+  .team-role,
+  .team-card p {
+    overflow-wrap: anywhere;
   }
 }
