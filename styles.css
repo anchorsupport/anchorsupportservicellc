@@ -639,13 +639,17 @@ textarea {
 }
 
 .team-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  align-items: stretch;
 }
 
 .team-card {
   position: relative;
   overflow: hidden;
   min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .team-card-top {
@@ -661,6 +665,7 @@ textarea {
   margin: 1rem 0;
   display: flex;
   justify-content: center;
+  flex: 0 0 auto;
 }
 
 .team-photo,
@@ -715,13 +720,17 @@ textarea {
 }
 
 .team-card h3 {
-  margin-top: 0;
+  margin: 0;
 }
 
 .team-role {
   color: var(--navy);
   font-weight: 800;
-  margin: -0.25rem 0 0.75rem;
+  margin: 0.35rem 0 0.85rem;
+}
+
+.team-card p:last-child {
+  margin-bottom: 0;
 }
 
 .support-grid {
