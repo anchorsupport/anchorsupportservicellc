@@ -1,0 +1,1 @@
+Place your logo image as anchor-logo.png and your CEO photo as alex-ceo-picture.png. Update the file extensions if needed and keep the exact filenames in the HTML.
