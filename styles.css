@@ -32,8 +32,13 @@ body {
 }
 
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 90px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 img {
@@ -1107,8 +1112,25 @@ textarea {
   padding: clamp(36px, 6vw, 64px) 0;
 }
 
+#secure-paperwork {
+  scroll-margin-top: 7rem;
+}
+
+#secure-paperwork-title:focus {
+  outline: 3px solid var(--gold);
+  outline-offset: 4px;
+}
+
+.secure-paperwork-actions {
+  margin-top: 1.25rem;
+}
+
 .secure-paperwork-button {
   flex: 1 1 260px;
+}
+
+.section-actions {
+  margin-top: 1.25rem;
 }
 
 .secure-action-card {
@@ -1127,6 +1149,14 @@ textarea {
 
 .secure-action-card p {
   color: var(--muted);
+}
+
+.secure-action-card .button {
+  margin-top: 0.5rem;
+}
+
+.secure-action-card-centered {
+  text-align: center;
 }
 
 .secure-warning-card {
@@ -1160,11 +1190,11 @@ textarea {
   margin: 0 auto;
 }
 
-.secure-embed-section {
+.secure-paperwork-section {
   padding: 0 0 clamp(36px, 6vw, 64px);
 }
 
-.secure-embed-section h2 {
+.secure-paperwork-section h2 {
   color: var(--navy);
   margin-bottom: 0.5rem;
 }
@@ -1174,22 +1204,22 @@ textarea {
   margin-bottom: 1rem;
 }
 
-.secure-form-shell {
+.jotform-embed-wrapper {
+  width: 100%;
+  max-width: 960px;
+  margin: 2rem auto 0;
   background: var(--white);
   border: 1px solid rgba(0, 51, 95, 0.12);
-  border-radius: 24px;
+  border-radius: 18px;
   box-shadow: 0 20px 54px rgba(0, 40, 70, 0.12);
-  overflow: visible;
-  padding: 0;
+  overflow: hidden;
 }
 
-.secure-paperwork-frame {
+.jotform-embed-wrapper iframe {
   display: block;
   width: 100%;
-  min-height: 1100px;
-  height: 1100px;
+  min-height: 760px;
   border: 0;
-  border-radius: 20px;
   background: var(--white);
 }
 
@@ -1204,6 +1234,10 @@ textarea {
   font-weight: 800;
   text-decoration: underline;
   overflow-wrap: anywhere;
+}
+
+.secure-lower-cta {
+  padding: 0 0 clamp(36px, 6vw, 64px);
 }
 
 .secure-mobile-direct {
@@ -1233,9 +1267,15 @@ textarea {
   .secure-mobile-direct .button {
     width: 100%;
   }
+}
 
-  .secure-embed-section {
-    display: none;
+@media (max-width: 600px) {
+  .jotform-embed-wrapper {
+    border-radius: 10px;
+  }
+
+  .jotform-embed-wrapper iframe {
+    min-height: 820px;
   }
 }
 

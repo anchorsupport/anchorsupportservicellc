@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Secure paperwork page for Medicaid eligibility screening consent and Tenancy Support Services referral paperwork through Anchor Support Service LLC." />
   <meta name="theme-color" content="#00335f" />
-  <meta name="robots" content="noindex, nofollow">
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://anchorsupportservice.com/secure-paperwork.html" />
   <title>Secure Medicaid / TSS Paperwork | Anchor Support Service LLC</title>
   <link rel="icon" href="anchor-logo.png" type="image/png" />
   <link rel="stylesheet" href="styles.css" />
@@ -46,16 +47,22 @@
         <p class="eyebrow">Secure Paperwork</p>
         <h1>Secure Medicaid / TSS Paperwork</h1>
         <p>Use this secure paperwork page to begin Medicaid eligibility screening consent and Tenancy Support Services referral paperwork with Anchor Support Service LLC.</p>
+        <p class="secure-paperwork-support">Already ready to begin? Complete Anchor&rsquo;s secure online TSS paperwork.</p>
+        <div class="hero-actions secure-paperwork-actions">
+          <a class="button button-primary" href="#secure-paperwork" aria-label="Start Secure TSS Paperwork">
+            Start Secure Paperwork
+          </a>
+        </div>
       </div>
     </section>
 
-    <section class="secure-paperwork-layout" aria-label="Secure Medicaid and TSS paperwork">
+    <section class="secure-paperwork-layout" aria-labelledby="tss-review-title">
       <div class="container">
         <div class="secure-action-card">
-          <h2>Open secure paperwork in a full browser tab</h2>
-          <p>For the best experience, especially on a phone or tablet, open the secure paperwork in a full browser tab.</p>
-          <a class="button button-primary" href="https://www.jotform.com/sign/262093810043045/invite/01kysh2xtz3a472290ad355306" target="_blank" rel="noopener noreferrer">
-            Open Secure Paperwork Full Screen
+          <h2 id="tss-review-title">Before you begin</h2>
+          <p>The forms are submitted securely through Jotform. Printed forms are generally not necessary, and completing paperwork begins the review process.</p>
+          <a class="button button-primary" href="#secure-paperwork" aria-label="Complete Secure TSS Paperwork">
+            Complete TSS Paperwork
           </a>
         </div>
 
@@ -64,42 +71,59 @@
         </div>
 
         <div class="secure-note-card" role="note">
-          <p>Completing paperwork does not guarantee services, housing, financial assistance, Medicaid approval, Tenancy Support Services eligibility, prior authorization, application fee support, deposit support, landlord approval, or approval by another agency or program.</p>
+          <p>Submitting these forms begins the review process and does not guarantee HEART enrollment, TSS eligibility, prior authorization, funding, financial assistance, housing placement, or service approval.</p>
         </div>
 
         <section class="secure-mobile-direct" aria-labelledby="mobile-secure-paperwork-title">
-          <h2 id="mobile-secure-paperwork-title">Complete paperwork in a full browser tab</h2>
-          <p>For phone and tablet users, the secure signing page works best when opened directly.</p>
-          <a class="button button-primary" href="https://www.jotform.com/sign/262093810043045/invite/01kysh2xtz3a472290ad355306" target="_blank" rel="noopener noreferrer">
-            Open Secure Paperwork
+          <h2 id="mobile-secure-paperwork-title">Complete paperwork online</h2>
+          <p>Phone and tablet users can jump directly to the secure online paperwork section below.</p>
+          <a class="button button-primary" href="#secure-paperwork" aria-label="Start Secure TSS Paperwork">
+            Start Secure Paperwork
           </a>
         </section>
       </div>
     </section>
 
-    <section class="secure-embed-section" aria-labelledby="secure-embed-title">
+    <!-- Canonical TSS PA Jotform URL: update the iframe src and fallback href together when Jotform regenerates the invite token. -->
+    <section id="secure-paperwork" class="secure-paperwork-section" aria-labelledby="secure-paperwork-title">
       <div class="container-wide">
-        <h2 id="secure-embed-title">Embedded paperwork view</h2>
-        <p class="secure-embed-note">
-          The embedded view below is provided for convenience on larger screens. If any field is hard to click or appears cut off, use the full-screen button above.
-        </p>
+        <div class="section-heading">
+          <p class="eyebrow">Secure Online Submission</p>
+          <h2 id="secure-paperwork-title" tabindex="-1">Secure TSS Paperwork</h2>
+          <p>Complete and submit the required Anchor Support Service paperwork securely through Jotform. Printed copies are generally not necessary.</p>
+        </div>
 
-        <div class="secure-form-shell">
+        <p class="secure-embed-note">Submitting these forms begins the review process and does not guarantee eligibility, authorization, funding, or service approval.</p>
+
+        <div class="jotform-embed-wrapper">
           <iframe
-            title="Anchor Support Service secure Medicaid and TSS paperwork"
+            title="Anchor Support Service Secure TSS Prior Authorization Paperwork"
             src="https://www.jotform.com/sign/262093810043045/invite/01kysh2xtz3a472290ad355306?signEmbed=1"
-            class="secure-paperwork-frame"
             loading="lazy"
+            allow="clipboard-write"
+            tabindex="0"
             referrerpolicy="strict-origin-when-cross-origin"
           ></iframe>
         </div>
 
-        <p class="secure-form-fallback">
+        <p class="form-fallback secure-form-fallback">
           Having trouble loading the form?
-          <a href="https://www.jotform.com/sign/262093810043045/invite/01kysh2xtz3a472290ad355306" target="_blank" rel="noopener noreferrer">
-            Open the secure paperwork in a new tab
+          <a href="https://www.jotform.com/sign/262093810043045/invite/01kysh2xtz3a472290ad355306?signEmbed=1" target="_blank" rel="noopener noreferrer">
+            Open the secure TSS paperwork in a new tab
           </a>.
         </p>
+      </div>
+    </section>
+
+    <section class="secure-lower-cta" aria-labelledby="secure-lower-cta-title">
+      <div class="container">
+        <div class="secure-action-card secure-action-card-centered">
+          <h2 id="secure-lower-cta-title">Ready to complete the secure paperwork?</h2>
+          <p>Use the secure online form above to continue the TSS paperwork process with Anchor Support Service LLC.</p>
+          <a class="button button-primary" href="#secure-paperwork" aria-label="Return to Secure TSS Paperwork">
+            Start Secure Paperwork
+          </a>
+        </div>
       </div>
     </section>
   </main>
