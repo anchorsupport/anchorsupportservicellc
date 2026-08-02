@@ -1235,6 +1235,14 @@ textarea {
   margin-bottom: 1rem;
 }
 
+.secure-signing-note {
+  background: rgba(12, 116, 125, 0.08);
+  border-left: 4px solid var(--teal);
+  border-radius: 12px;
+  color: var(--text);
+  padding: 0.9rem 1rem;
+}
+
 .jotform-embed-wrapper {
   width: 100%;
   max-width: 1200px;
@@ -1256,54 +1264,21 @@ textarea {
   background: var(--white);
 }
 
-.secure-form-fallback {
-  margin-top: 1rem;
-  color: var(--muted);
-  text-align: center;
-}
-
-.secure-form-fallback a {
-  color: var(--navy);
-  font-weight: 800;
-  text-decoration: underline;
-  overflow-wrap: anywhere;
-}
-
 .secure-lower-cta {
   padding: 0 0 clamp(36px, 6vw, 64px);
 }
 
-.secure-mobile-direct {
-  display: none;
-}
-
 @media (max-width: 760px) {
-  .secure-embed-section,
   .jotform-embed-wrapper {
-    display: none;
+    max-width: 100%;
+    margin-top: 1.25rem;
+    border-radius: 12px;
   }
 
-  .secure-mobile-direct {
-    display: block;
-    background: var(--white);
-    border: 1px solid rgba(0, 51, 95, 0.12);
-    border-radius: 22px;
-    box-shadow: 0 16px 38px rgba(0, 40, 70, 0.09);
-    padding: 1.25rem;
-    margin-top: 1rem;
-  }
-
-  .secure-mobile-direct h2 {
-    color: var(--navy);
-    margin-top: 0;
-  }
-
-  .secure-mobile-direct p {
-    color: var(--muted);
-  }
-
-  .secure-mobile-direct .button {
-    width: 100%;
+  .secure-paperwork-frame,
+  .jotform-embed-wrapper iframe {
+    min-height: 1100px;
+    height: 1100px;
   }
 }
 
