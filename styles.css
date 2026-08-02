@@ -1232,19 +1232,21 @@ textarea {
 
 .jotform-embed-wrapper {
   width: 100%;
-  max-width: 960px;
+  max-width: 1200px;
   margin: 2rem auto 0;
   background: var(--white);
   border: 1px solid rgba(0, 51, 95, 0.12);
   border-radius: 18px;
   box-shadow: 0 20px 54px rgba(0, 40, 70, 0.12);
-  overflow: hidden;
+  overflow: visible;
 }
 
+.secure-paperwork-frame,
 .jotform-embed-wrapper iframe {
   display: block;
   width: 100%;
-  min-height: 760px;
+  min-height: 1000px;
+  height: 1000px;
   border: 0;
   background: var(--white);
 }
@@ -1271,6 +1273,11 @@ textarea {
 }
 
 @media (max-width: 760px) {
+  .secure-embed-section,
+  .jotform-embed-wrapper {
+    display: none;
+  }
+
   .secure-mobile-direct {
     display: block;
     background: var(--white);
@@ -1298,10 +1305,6 @@ textarea {
 @media (max-width: 600px) {
   .jotform-embed-wrapper {
     border-radius: 10px;
-  }
-
-  .jotform-embed-wrapper iframe {
-    min-height: 820px;
   }
 }
 

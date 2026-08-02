@@ -59,7 +59,7 @@ if (samePageNavLinks.length && navTargets.length && 'IntersectionObserver' in wi
 }
 
 const revealTargets = document.querySelectorAll(
-  '.hero, main > .section, .secure-paperwork-hero, .secure-paperwork-layout, .secure-paperwork-section, .secure-lower-cta, .site-footer'
+  '.hero, main > .section, .site-footer'
 );
 
 if (!reducedMotionQuery.matches && revealTargets.length && 'IntersectionObserver' in window) {
