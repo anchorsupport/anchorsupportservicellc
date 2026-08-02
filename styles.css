@@ -1217,7 +1217,7 @@ textarea {
 }
 
 .secure-paperwork-page .container-wide {
-  width: min(1500px, calc(100% - 32px));
+  width: min(1600px, calc(100% - 24px));
   margin: 0 auto;
 }
 
@@ -1245,8 +1245,8 @@ textarea {
 
 .jotform-embed-wrapper {
   width: 100%;
-  max-width: 1200px;
-  margin: 2rem auto 0;
+  max-width: none;
+  margin: 1.5rem auto 0;
   background: var(--white);
   border: 1px solid rgba(0, 51, 95, 0.12);
   border-radius: 18px;
@@ -1258,27 +1258,27 @@ textarea {
 .jotform-embed-wrapper iframe {
   display: block;
   width: 100%;
-  min-height: 1000px;
-  height: 1000px;
+  min-height: 1350px;
+  height: 1350px;
   border: 0;
   background: var(--white);
 }
 
-.secure-lower-cta {
-  padding: 0 0 clamp(36px, 6vw, 64px);
-}
-
 @media (max-width: 760px) {
+  .secure-paperwork-page .container-wide {
+    width: min(100% - 12px, 100%);
+  }
+
   .jotform-embed-wrapper {
-    max-width: 100%;
-    margin-top: 1.25rem;
+    margin-top: 1rem;
     border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(0, 40, 70, 0.10);
   }
 
   .secure-paperwork-frame,
   .jotform-embed-wrapper iframe {
-    min-height: 1100px;
-    height: 1100px;
+    min-height: 1500px;
+    height: 1500px;
   }
 }
 
