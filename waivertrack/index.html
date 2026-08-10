@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Secure staff access for WaiverTrack TSS at Anchor Support Service LLC." />
+  <meta name="theme-color" content="#00335f" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://anchorsupportservice.com/waivertrack/" />
+  <link rel="icon" href="../anchor-logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+  <title>WaiverTrack TSS | Anchor Support Service LLC</title>
+  <style>
+    .waivertrack-page {
+      min-height: calc(100vh - 78px);
+      display: grid;
+      align-items: center;
+      padding: 4.5rem 0;
+      background: var(--soft-cream);
+    }
+
+    .waivertrack-panel {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      padding: clamp(2rem, 5vw, 4rem);
+      background: var(--white);
+      border: 1px solid rgba(0, 51, 95, 0.14);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .waivertrack-panel .eyebrow {
+      color: var(--teal);
+      margin-bottom: 0.8rem;
+    }
+
+    .waivertrack-panel h1 {
+      color: var(--navy);
+      margin: 0;
+    }
+
+    .waivertrack-panel h2 {
+      color: var(--text);
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    .waivertrack-panel p {
+      max-width: 58ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .waivertrack-security {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      padding: 0.55rem 0.9rem;
+      color: var(--navy);
+      background: #e8f3f4;
+      border: 1px solid #a7d3d2;
+      border-radius: 999px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+
+    .waivertrack-action {
+      margin-top: 2rem;
+    }
+
+    .waivertrack-note {
+      margin-top: 1.75rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .waivertrack-note a {
+      color: var(--navy);
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 0.18em;
+    }
+
+    @media (max-width: 620px) {
+      .waivertrack-page {
+        min-height: calc(100vh - 64px);
+        padding: 2rem 0;
+      }
+
+      .waivertrack-panel {
+        border-radius: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a class="brand" href="../">
+        <img class="site-logo" src="../anchor-logo.png" alt="Anchor Support Service LLC logo" />
+        <span class="brand-text">
+          <strong>Anchor Support Service LLC</strong>
+          <small>Tenancy Support Services</small>
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main-content" class="waivertrack-page">
+    <div class="container">
+      <section class="waivertrack-panel" aria-labelledby="waivertrack-title">
+        <p class="eyebrow">Anchor Support Service LLC</p>
+        <h1 id="waivertrack-title">WaiverTrack TSS</h1>
+        <div class="waivertrack-security">Secure staff access</div>
+        <h2>Your secure staff workspace</h2>
+        <p>WaiverTrack is Anchor Support Service's secure workspace for tenancy support operations and documentation.</p>
+        <p>Authorized staff and invited testers only.</p>
+        <div class="waivertrack-action">
+          <a class="button button-primary" href="https://anchor-waivertrack-staging-bja3eqc4ekbqc0a0.westus3-01.azurewebsites.net/.auth/login/aad?post_login_redirect_uri=%2F">Continue with Microsoft</a>
+        </div>
+        <p class="waivertrack-note">Having trouble accessing WaiverTrack? <a href="mailto:info@anchorsupportservice.com">Contact Anchor Support Service</a>.</p>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
