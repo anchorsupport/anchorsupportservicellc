@@ -2070,6 +2070,9 @@ textarea {
 .careers-hero h1 { color:var(--white); font-size:clamp(2.25rem,4.2vw,3.65rem); line-height:1.08; margin:0 0 1rem; max-width:760px; }
 .careers-hero .hero-lead { color:rgba(255,255,255,.9); }
 .careers-status { color:#b6f1e9; font-size:.8rem; font-weight:900; letter-spacing:.12em; margin:0 0 .7rem; text-transform:uppercase; }
+.careers-hero-pay { align-items:baseline; color:#fff; display:flex; flex-wrap:wrap; gap:.35rem 1rem; margin:.35rem 0 1.1rem; }
+.careers-hero-pay strong { color:#7ee2d6; font-size:clamp(1.25rem,2.1vw,1.7rem); letter-spacing:-.02em; }
+.careers-hero-pay span { color:rgba(255,255,255,.88); font-size:.95rem; font-weight:700; }
 .careers-hero .paused-notice { max-width:760px; }
 .careers-actions { flex-wrap:wrap; }
 .careers-facts,.careers-card,.careers-panel,.careers-preferred { background:var(--white); border:1px solid rgba(0,51,95,.11); border-radius:20px; box-shadow:0 14px 38px rgba(0,40,70,.07); color:var(--text); min-width:0; padding:1.35rem; }

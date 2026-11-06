@@ -101,7 +101,8 @@ def main():
                     absolute = urljoin(page.url, href)
                     parts = urlparse(absolute)
                     if parts.scheme in ("mailto", "tel"):
-                        if parts.scheme == "mailto" and parts.path.lower() != "info@anchorsupportservice.com":
+                        allowed_mailboxes = {"info@anchorsupportservice.com", "alex@anchorsupportservice.com"} if path.startswith("/careers") else {"info@anchorsupportservice.com"}
+                        if parts.scheme == "mailto" and parts.path.lower() not in allowed_mailboxes:
                             results["internal_links"].append({"source": path, "href": href, "issue": "unexpected_mailto"})
                         if parts.scheme == "tel" and re.sub(r"\D", "", parts.path) != "4062197035":
                             results["internal_links"].append({"source": path, "href": href, "issue": "unexpected_tel"})
@@ -156,7 +157,7 @@ def main():
                 page.get_by_role("link", name="View Career Opportunity").click()
                 on_careers = urlparse(page.url).path == "/careers/" and page.get_by_role("heading", name="Housing Navigator / Tenancy Support Specialist").count() == 1
                 text = page.locator("body").inner_text()
-                content_present = all(s in text for s in ["Minimum qualifications", "Preferred qualifications", "$17.00-$18.00", "$18.00-$20.00", "twelve (12) months"])
+                content_present = all(s in text for s in ["Minimum qualifications", "Preferred qualifications", "What the work can look like", "$17.00-$18.00", "$18.00-$20.00", "twelve (12) months", "no guaranteed minimum paid hours"])
                 download_link = page.get_by_role("link", name="Download Job Description (PDF)").first
                 href = download_link.get_attribute("href")
                 with page.expect_download() as download_info:
@@ -167,7 +168,8 @@ def main():
                     download.save_as(target)
                     download_ok = target.read_bytes().startswith(b"%PDF-") and target.stat().st_size > 1000
                 email_hrefs = page.locator('a[href^="mailto:"]').evaluate_all("els => els.map(x=>x.href)")
-                mailto_ok = any("info@anchorsupportservice.com" in u and "Housing%20Navigator%20Application" in u for u in email_hrefs)
+                application_copy_ok = "alex@anchorsupportservice.com" in text and page.locator('a.button[href^="mailto:info@anchorsupportservice.com"]').count() == 0
+                mailto_ok = application_copy_ok and any("mailto:alex@anchorsupportservice.com" in u and "Housing%20Navigator%20Application" in u for u in email_hrefs)
                 menu_policy_ok = True
                 if width <= 768:
                     page.locator(".nav-toggle").click()
