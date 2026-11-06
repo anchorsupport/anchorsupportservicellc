@@ -1,22 +1,21 @@
-# Anchor Support Service LLC
+# Anchor Support Service LLC Website
 
-This repository contains the static one-page website for Anchor Support Service LLC.
+This repository contains the public static website for Anchor Support Service LLC. It uses plain HTML, CSS, and JavaScript and deploys to GitHub Pages from the `main` branch through `.github/workflows/static.yml`.
 
-## Launch-ready assets
-- `index.html`
-- `styles.css`
-- `script.js`
-- `anchor-logo.png`
-- `alex-ceo-picture.png`
+## Public pages
 
-## Deploy on GitHub Pages
-1. Push this repository to GitHub.
-2. Open the repository settings and go to Pages.
-3. Select the `main` branch and use the root folder.
-4. Save and wait for GitHub Pages to publish the site.
+- Home: `/`
+- Careers: `/careers/`
+- Privacy Policy (canonical): `/policy.html`
+- Legacy Privacy Policy URL: `/privacy-policy.html` redirects to `/policy.html`
+- Secure paperwork status: `/secure-paperwork.html`
 
-## Notes
-- The site is built with plain HTML, CSS, and JavaScript.
-- Navigation and mobile menu behavior are included in `script.js`.
+The public Careers page links to the applicant-facing job description in `assets/`. The current new-client intake pause remains in place.
 
-When the custom domain is ready, add a CNAME file in the repo root containing the final domain.
+## Local website QA
+
+Run `python .github/site-tools/website_qa.py` with Python Playwright and its Chromium browser installed. The sweep checks internal routes and links, navigation behavior, downloads, responsive layouts, zoom widths, console errors, and key assets.
+
+## Rebuild the public job-description PDF
+
+Run `python .github/site-tools/build_public_job_description.py` with ReportLab installed. This creates the applicant-facing PDF in `assets/`; internal acknowledgment and staff-file mechanics are excluded.
