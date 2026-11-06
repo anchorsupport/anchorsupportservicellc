@@ -67,6 +67,26 @@ def main():
                     if len(state["h1"]) != 1:
                         results["accessibility"].append({"path": path, "issue": "h1_count", "count": len(state["h1"])})
 
+                    if path == "/policy.html":
+                        page.evaluate("window.scrollTo(0, Math.floor(document.documentElement.scrollHeight / 2))")
+                        policy_state = page.evaluate("""() => {
+                          const wrapper = document.querySelector('.policy-section');
+                          const panel = document.querySelector('#mobile-information');
+                          const wrapperStyle = getComputedStyle(wrapper);
+                          const panelStyle = getComputedStyle(panel);
+                          return {
+                            wrapperOpacity: wrapperStyle.opacity,
+                            wrapperVisibility: wrapperStyle.visibility,
+                            panelOpacity: panelStyle.opacity,
+                            panelVisibility: panelStyle.visibility,
+                            panelHeight: panel.getBoundingClientRect().height,
+                            panelTextLength: panel.innerText.length,
+                            scrollY,
+                          };
+                        }""")
+                        if policy_state["wrapperOpacity"] != "1" or policy_state["wrapperVisibility"] != "visible" or policy_state["panelOpacity"] != "1" or policy_state["panelVisibility"] != "visible" or policy_state["panelHeight"] <= 0 or policy_state["panelTextLength"] < 100:
+                            results["accessibility"].append({"path": path, "width": width, "issue": "policy_content_not_visible_midpage", **policy_state})
+
                     if width in (360, 375, 390, 430, 768, 900, 1024):
                         toggle = page.locator(".nav-toggle")
                         if not toggle.is_visible():

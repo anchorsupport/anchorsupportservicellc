@@ -1826,6 +1826,12 @@ textarea {
   .policy-toc {
     position: static;
   }
+
+  .footer-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
 }
 
 @media (max-width: 900px) {

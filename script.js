@@ -58,9 +58,12 @@ if (samePageNavLinks.length && navTargets.length && 'IntersectionObserver' in wi
   navTargets.forEach((target) => navObserver.observe(target));
 }
 
-const revealTargets = document.querySelectorAll(
-  '.hero, main > .section, .site-footer'
-);
+// Legal content should remain readable without scroll-triggered animation.
+// The Privacy Policy is one very tall section, so its intersection ratio may
+// never reach the reveal threshold on a mobile viewport.
+const revealTargets = document.body.classList.contains('policy-page')
+  ? []
+  : document.querySelectorAll('.hero, main > .section, .site-footer');
 
 if (!reducedMotionQuery.matches && revealTargets.length && 'IntersectionObserver' in window) {
   const revealObserver = new IntersectionObserver(
