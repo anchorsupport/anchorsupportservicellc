@@ -189,7 +189,7 @@ def main():
                     download_ok = target.read_bytes().startswith(b"%PDF-") and target.stat().st_size > 1000
                 email_hrefs = page.locator('a[href^="mailto:"]').evaluate_all("els => els.map(x=>x.href)")
                 application_copy_ok = "alex@anchorsupportservice.com" in text and page.locator('a.button[href^="mailto:info@anchorsupportservice.com"]').count() == 0
-                mailto_ok = application_copy_ok and any("mailto:alex@anchorsupportservice.com" in u and "Housing%20Navigator%20Application" in u for u in email_hrefs)
+                mailto_ok = application_copy_ok and page.get_by_role("link", name="Email Your Résumé").count() == 2 and all(u == "mailto:alex@anchorsupportservice.com?subject=Housing%20Navigator%20-%20Resume" for u in page.locator('a.button-primary[href^="mailto:"]').evaluate_all("els => els.map(x=>x.getAttribute('href'))")) and "Interested in joining Anchor Support Service? Email your résumé and a brief introduction to alex@anchorsupportservice.com. To request the complete job description, please email the same address." in text
                 menu_policy_ok = True
                 if width <= 768:
                     page.locator(".nav-toggle").click()

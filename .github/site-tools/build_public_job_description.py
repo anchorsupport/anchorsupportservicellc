@@ -235,7 +235,7 @@ story += section("Preferred qualifications", bullets([
 ]))
 
 story += section("Schedule, compensation, and probation", [
-    P("This is a W-2 employee position classified as hourly / non-exempt and part-time / variable hours. Hours vary with client appointments, authorized service needs, available assignments, staffing, and company operations. Cancellations, no-shows, rescheduling, or changes in allowable service needs may change available hours. There is no guaranteed minimum paid hours or billable hours, and there is no fixed schedule."),
+    P("This is a W-2 employee position classified as hourly / non-exempt and part-time / variable hours. Available hours depend on assigned clients, caseload, appointments, authorized service needs, available assignments, staffing, and company operations. Cancellations, no-shows, rescheduling, or changes in allowable service needs may change available hours. There is no guaranteed minimum paid hours or billable hours, and there is no fixed schedule."),
     P("<b>Probationary starting range: $17.00–$18.00 per hour,</b> based on documented relevant experience, education/training, qualifications, and other lawful job-related factors. The introductory/probationary period is twelve (12) months from date of hire."),
     P("Successful completion of probation includes a compensation review. The post-probation target range is generally <b>$18.00–$20.00 per hour</b>, depending on performance, demonstrated competency, responsibilities, current business conditions, and company approval. A pay increase is not automatic or guaranteed."),
 ])
@@ -265,9 +265,10 @@ story += section("Equal employment", [
 
 apply_block = [
     P("How to apply", "Section"),
-    P("Please email your resume and a short letter of interest explaining why you are interested in the Housing Navigator / Tenancy Support Specialist position to:", "BodySmall"),
+    P("Interested in joining Anchor Support Service? Email your résumé and a brief introduction to:", "BodySmall"),
     P("<link href='mailto:alex@anchorsupportservice.com' color='#06375d'><b>alex@anchorsupportservice.com</b></link>", "Callout"),
-    P("Suggested subject: <b>Housing Navigator Application – [Applicant Name]</b>", "BodySmall"),
+    P("To request the complete job description, please email the same address.", "BodySmall"),
+    P("Suggested subject: <b>Housing Navigator - Resume</b>", "BodySmall"),
     P("Please do not email Social Security numbers, dates of birth, medical information, or other unnecessary sensitive personal information.", "BodySmall"),
 ]
 story.append(KeepTogether(apply_block))
