@@ -205,7 +205,8 @@ def main():
                 policy_contact_ok = page.locator("#contact-information").is_visible() and page.locator('#contact-information a[href="mailto:info@anchorsupportservice.com"]').count() == 1 and page.locator('#contact-information a[href="tel:4062197035"]').count() == 1
                 page.goto(base + "/#contact", wait_until="networkidle")
                 contact_text = page.locator("#contact").inner_text()
-                contact_ok = "(406) 219-7035" in contact_text and "(406) 540-7982" in contact_text and "info@anchorsupportservice.com" in contact_text and "paused from accepting new clients" in contact_text
+                office_text = page.locator(".office-update-card").inner_text()
+                contact_ok = all(s in contact_text for s in ["(406) 219-7035", "(406) 540-7982", "info@anchorsupportservice.com", "paused from accepting new clients", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available", "PO Box 17021", "3150 Great Northern Loop"]) and all(s.casefold() in office_text.casefold() for s in ["Office Location Update", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available"]) and page.locator('#contact a[href^="https://www.google.com/maps/search/"]').count() == 1 and page.locator('.office-update-card a[href^="https://www.google.com/maps/search/"]').count() == 1
                 page.goto(base + "/policy.html", wait_until="networkidle")
                 overflow_after_zoom = []
                 for zoom_width in [int(width/1.25), int(width/2)] if width <= 430 else []:

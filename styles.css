@@ -483,6 +483,96 @@ textarea {
   max-width: 100%;
 }
 
+.office-update-section {
+  padding-top: clamp(24px, 3vw, 36px);
+  padding-bottom: clamp(24px, 3vw, 36px);
+}
+
+.office-update-card {
+  align-items: center;
+  background: var(--soft-cream);
+  border: 1px solid rgba(0, 51, 95, 0.12);
+  border-left: 6px solid var(--teal);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(0, 40, 70, 0.08);
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1.5fr) minmax(240px, 0.8fr);
+  min-width: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.office-update-copy,
+.office-update-details {
+  min-width: 0;
+}
+
+.office-update-copy .eyebrow {
+  color: var(--teal);
+  font-weight: 850;
+  margin: 0 0 0.35rem;
+}
+
+.office-update-card h2 {
+  color: var(--navy);
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+  line-height: 1.2;
+  margin: 0 0 0.6rem;
+}
+
+.office-update-card p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.office-update-details {
+  background: var(--white);
+  border: 1px solid rgba(0, 51, 95, 0.1);
+  border-radius: 14px;
+  padding: 1.1rem;
+}
+
+.office-update-details > strong {
+  color: var(--teal);
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.55rem;
+  text-transform: uppercase;
+}
+
+.office-update-details address,
+.office-location-card address {
+  color: var(--navy);
+  font-style: normal;
+  font-weight: 750;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.office-update-details p {
+  font-size: 0.92rem;
+  margin-bottom: 0.85rem;
+}
+
+.office-update-details .button {
+  min-height: 44px;
+}
+
+.office-location-card > p {
+  margin-bottom: 0.45rem;
+}
+
+.footer-office-location {
+  line-height: 1.55;
+}
+
+@media (max-width: 700px) {
+  .office-update-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .section-header p {
   max-width: 640px;
   color: rgba(255, 255, 255, 0.92);
