@@ -265,7 +265,7 @@ story += section("Equal employment", [
 
 apply_block = [
     P("How to apply", "Section"),
-    P("<link href='https://www.indeed.com/viewjob?jk=b645ab34482aea27&amp;from=shareddesktop_copy' color='#06375d'><b>Apply on Indeed</b></link>", "Callout"),
+    P("<link href='https://www.indeed.com/viewjob?jk=b645ab34482aea27' color='#06375d'><b>Apply on Indeed</b></link>", "Callout"),
     P("All employment applications are processed through Indeed. Please submit your resume and application using the link above. Employment applications are not accepted through our general contact form or business email.", "BodySmall"),
 ]
 story.append(KeepTogether(apply_block))

@@ -18,7 +18,7 @@
   <meta name="twitter:description" content="Housing-related support and Tenancy Support Services information for eligible adults in Missoula County, Montana." />
   <meta name="twitter:image" content="https://anchorsupportservice.com/anchor-logo.png" />
   <title>Anchor Support Service LLC | Missoula County Tenancy Support Services</title>
-  <link rel="icon" href="anchor-logo.png" type="image/png" />
+  <link rel="icon" href="anchor-favicon.png" type="image/png" sizes="256x256" />
   <link rel="stylesheet" href="styles.css" />
   <script type="application/ld+json">
   {
@@ -43,7 +43,7 @@
   <header class="site-header">
     <div class="container nav-inner">
       <a class="brand" href="#home" aria-label="Anchor Support Service LLC home">
-        <img class="site-logo" src="anchor-logo.png" alt="Anchor Support Service LLC logo" onerror="this.style.display='none'; document.querySelector('.brand-text').style.display='flex';" />
+        <picture><source srcset="anchor-logo-display.webp" type="image/webp" /><img class="site-logo" src="anchor-logo.png" width="1254" height="1254" decoding="async" alt="Anchor Support Service LLC logo" onerror="this.style.display='none'; document.querySelector('.brand-text').style.display='flex';"  /></picture>
         <div class="brand-text" style="display:none;">
           <strong>Anchor Support Service LLC</strong>
           <small>Tenancy Support Services</small>
@@ -56,15 +56,13 @@
       </button>
       <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
         <a href="#home">Home</a>
-        <a href="#about">About</a>
         <a href="#services">Services</a>
         <a href="#eligibility">Eligibility</a>
-        <a href="#team">Our Team</a>
         <a href="#support">Who We Support</a>
         <a href="#resources">Resources</a>
         <a href="#contact">Contact</a>
         <a href="/careers/">Careers</a>
-        <a class="mobile-nav-privacy" href="/policy.html">Privacy Policy</a>
+        <a href="/policy.html">Privacy Policy</a>
       </nav>
     </div>
   </header>
@@ -74,33 +72,61 @@
       <div class="container hero-grid">
         <div class="hero-copy">
           <p class="eyebrow">Missoula-based tenancy support</p>
-          <h1>Anchor Support Service LLC</h1>
+          <h1>Housing support with clear next steps</h1>
           <p class="hero-lead">Organized tenancy support, service planning, and documentation for eligible adults navigating housing-related needs in Missoula County, Montana.</p>
           <p class="paused-notice" role="status"><strong>New client pause:</strong> Anchor Support Service LLC is currently paused from taking new clients while we review capacity and program changes.</p>
-          <aside class="home-hiring-callout" aria-labelledby="home-hiring-title">
-            <p class="eyebrow">Now hiring</p>
-            <h2 id="home-hiring-title">Housing Navigator / Tenancy Support Specialist</h2>
-            <p>Anchor Support Service LLC is hiring a part-time, variable-hour Housing Navigator / Tenancy Support Specialist in Missoula, Montana.</p>
-            <a class="button button-secondary" href="/careers/">View Career Opportunity</a>
-          </aside>
           <div class="hero-actions">
-            <a class="button button-primary" href="#contact">Contact Anchor</a>
-            <a class="button button-secondary" href="#services">Learn About Services</a>
+            <a class="button button-primary" href="#services">Explore Services</a>
+            <a class="button button-secondary" href="#contact">Contact Anchor</a>
           </div>
         </div>
-        <div class="hero-card">
-          <h2>Local planning with clear next steps</h2>
-          <p>A steady process for referrals, service notes, and respectful follow-up across housing-related systems.</p>
-          <div class="hero-highlights">
-            <div>
-              <strong>Missoula-based</strong>
-              <span>Grounded coordination and trusted workflow.</span>
-            </div>
-            <div>
-              <strong>Person-centered</strong>
-              <span>Support built around dignity and practical next steps.</span>
-            </div>
-          </div>
+        <aside class="hero-card home-hiring-callout" aria-labelledby="home-hiring-title">
+          <p class="eyebrow">Now hiring</p>
+          <h2 id="home-hiring-title">Housing Navigator / Tenancy Support Specialist</h2>
+          <p>Part-time, variable-hour W-2 employment supporting housing navigation and tenancy goals in Missoula.</p>
+          <a class="button button-primary" href="/careers/">View Career Opportunity</a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section-white" id="services">
+      <div class="container">
+        <div class="section-header section-heading">
+          <p class="eyebrow">Services</p>
+          <h2>Structured support for housing and tenancy stability</h2>
+          <p>Services are organized around practical next steps, respectful communication, and clear records.</p>
+        </div>
+        <div class="service-grid">
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">🏠</div>
+            <h3>Housing-related support</h3>
+            <p>Help preparing for housing-related meetings, referrals, and next steps.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">🧭</div>
+            <h3>Tenancy support planning</h3>
+            <p>Assistance with tenancy support plans, records, and follow-up tasks.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">🔗</div>
+            <h3>Resource navigation</h3>
+            <p>Help connecting to relevant housing, health, and community resources in the Missoula area.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">📋</div>
+            <h3>Client follow-up and coordination</h3>
+            <p>Follow-up that keeps service tasks moving and communication clear.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">📝</div>
+            <h3>Documentation and service planning</h3>
+            <p>Careful preparation of service notes, plans, and referral records.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">🤝</div>
+            <h3>Landlord and community coordination</h3>
+            <p>When appropriate, help coordinating with landlords and local service partners.</p>
+          </article>
         </div>
       </div>
     </section>
@@ -167,47 +193,7 @@
       </div>
     </section>
 
-    <section class="section section-white" id="services">
-      <div class="container">
-        <div class="section-header section-heading">
-          <p class="eyebrow">Services</p>
-          <h2>Structured support for housing and tenancy stability</h2>
-          <p>Services are organized around practical next steps, respectful communication, and clear records.</p>
-        </div>
-        <div class="service-grid">
-          <article class="service-card">
-            <div class="service-icon" aria-hidden="true">🏠</div>
-            <h3>Housing-related support</h3>
-            <p>Help preparing for housing-related meetings, referrals, and next steps.</p>
-          </article>
-          <article class="service-card">
-            <div class="service-icon" aria-hidden="true">🧭</div>
-            <h3>Tenancy support planning</h3>
-            <p>Assistance with tenancy support plans, records, and follow-up tasks.</p>
-          </article>
-          <article class="service-card">
-            <div class="service-icon" aria-hidden="true">🔗</div>
-            <h3>Resource navigation</h3>
-            <p>Help connecting to relevant housing, health, and community resources in the Missoula area.</p>
-          </article>
-          <article class="service-card">
-            <div class="service-icon" aria-hidden="true">📋</div>
-            <h3>Client follow-up and coordination</h3>
-            <p>Follow-up that keeps service tasks moving and communication clear.</p>
-          </article>
-          <article class="service-card">
-            <div class="service-icon" aria-hidden="true">📝</div>
-            <h3>Documentation and service planning</h3>
-            <p>Careful preparation of service notes, plans, and referral records.</p>
-          </article>
-          <article class="service-card">
-            <div class="service-icon" aria-hidden="true">🤝</div>
-            <h3>Landlord and community coordination</h3>
-            <p>When appropriate, help coordinating with landlords and local service partners.</p>
-          </article>
-        </div>
-      </div>
-    </section>
+
 
     <section class="section section-alt" id="eligibility">
       <div class="container">
@@ -293,7 +279,7 @@
               <div class="team-badge">Founder & Chief Executive Officer</div>
             </div>
             <div class="team-hero">
-              <img class="team-photo" src="alex-ceo-picture.png" alt="Photo of Alex Sanchez Jr., founder and CEO of Anchor Support Service LLC" onerror="this.style.display='none';" />
+              <picture><source srcset="alex-ceo-picture-display.webp" type="image/webp" /><img class="team-photo" src="alex-ceo-picture.png" width="517" height="490" loading="lazy" decoding="async" alt="Photo of Alex Sanchez Jr., founder and CEO of Anchor Support Service LLC" onerror="this.style.display='none';" /></picture>
             </div>
             <h3>Alex Sanchez Jr.</h3>
             <p class="team-role">Founder &amp; Chief Executive Officer</p>

@@ -14,7 +14,18 @@ The public Careers page links to the applicant-facing job description in `assets
 
 ## Local website QA
 
-Run `python .github/site-tools/website_qa.py` with Python Playwright and its Chromium browser installed. The sweep checks internal routes and links, navigation behavior, downloads, responsive layouts, zoom widths, console errors, and key assets.
+The Pages workflow publishes a curated `dist/public-site` directory, not the repository root. To build and test the exact publishable file set locally, install the pinned CI tools, generate the public PDF, assemble the allowlisted output, and run the existing responsive QA suite against it:
+
+```powershell
+python -m pip install -r .github/site-tools/requirements-ci.txt
+python -m playwright install chromium
+python .github/site-tools/build_public_job_description.py
+python .github/site-tools/build_site.py
+python .github/site-tools/website_qa.py --root dist/public-site
+python -m http.server 8000 --directory dist/public-site
+```
+
+Open `http://localhost:8000/` for a local preview. The QA sweep checks internal routes and links, navigation behavior, downloads, responsive layouts, zoom widths, console errors, and key assets. The publish builder uses an explicit file allowlist and intentionally leaves WaiverTrack's current public landing route unchanged while the staff destination is being verified.
 
 ## Rebuild the public job-description PDF
 

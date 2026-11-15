@@ -2240,3 +2240,180 @@ textarea {
   border-color: var(--deep-navy);
   color: var(--white);
 }
+
+/* Phase 1: simplify the shared navigation and focus the homepage above the fold. */
+.site-nav {
+  gap: 0.15rem;
+}
+
+.site-nav a {
+  font-size: 0.88rem;
+  padding-inline: 0.4rem;
+  white-space: nowrap;
+}
+
+.hero {
+  padding-block: clamp(2rem, 4vw, 3.25rem);
+}
+
+.hero-grid {
+  grid-template-columns: minmax(0, 1.08fr) minmax(270px, 0.72fr);
+  align-items: center;
+}
+
+.hero h1 {
+  font-size: clamp(2.25rem, 4vw, 3.65rem);
+  line-height: 1.05;
+  margin-bottom: 1rem;
+}
+
+.hero-copy .hero-lead {
+  margin-bottom: 0;
+}
+
+.hero-copy .paused-notice {
+  margin-top: 1rem;
+}
+
+.hero-actions {
+  gap: 0.7rem;
+  margin-top: 1.1rem;
+}
+
+.hero-actions .button {
+  min-height: 46px;
+}
+
+.hero-card.home-hiring-callout {
+  background: var(--white);
+  border: 1px solid rgba(26, 166, 166, 0.38);
+  border-left: 5px solid var(--teal);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(0, 24, 45, 0.16);
+  color: var(--text);
+  margin: 0;
+  padding: clamp(1.25rem, 2.5vw, 1.8rem);
+}
+
+.hero-card.home-hiring-callout > p:not(.eyebrow) {
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+
+.hero-card.home-hiring-callout h2 {
+  color: var(--navy);
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  line-height: 1.25;
+  margin: 0 0 0.7rem;
+}
+
+.hero-card.home-hiring-callout .eyebrow {
+  color: var(--teal);
+  margin: 0 0 0.45rem;
+}
+
+.careers-hero-intro-compact {
+  display: none;
+}
+
+.careers-hero-actions,
+.careers-actions {
+  margin-top: 0.8rem;
+}
+
+.careers-hero .careers-actions .button-primary {
+  order: 0;
+}
+
+@media (max-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 0.78fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-card.home-hiring-callout {
+    max-width: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    padding-block: 1.65rem 1.8rem;
+  }
+
+  .hero-grid {
+    gap: 1rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 9vw, 2.65rem);
+    line-height: 1.08;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-lead {
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+
+  .hero-copy .paused-notice {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .hero-actions {
+    gap: 0.55rem;
+    flex-direction: row;
+    margin-top: 0.85rem;
+  }
+
+  .hero-actions .button {
+    flex: 1 1 145px;
+    padding-inline: 1rem;
+    width: auto;
+  }
+
+  .hero-card.home-hiring-callout {
+    border-radius: 14px;
+    padding: 1.1rem;
+  }
+
+  .careers-hero {
+    padding: 1.8rem 0 1.6rem;
+  }
+
+  .careers-hero-intro-full {
+    display: none;
+  }
+
+  .careers-hero-intro-compact {
+    display: block;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    margin-bottom: 0.7rem;
+  }
+
+  .careers-hero .careers-actions {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 0.2rem;
+  }
+
+  .careers-hero .careers-actions .button-primary {
+    order: -1;
+  }
+
+  .careers-hero .careers-actions .button {
+    flex: 0 0 auto;
+    min-height: 50px;
+  }
+
+  .careers-hero .careers-hero-pay {
+    margin-top: 0.8rem;
+  }
+}

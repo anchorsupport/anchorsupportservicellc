@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+import argparse
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
@@ -11,7 +12,7 @@ import tempfile
 
 from playwright.sync_api import sync_playwright
 
-ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_ROOT = Path(__file__).resolve().parents[2]
 PAGES = ["/", "/careers/", "/policy.html", "/secure-paperwork.html", "/404.html"]
 VIEWPORTS = [360, 375, 390, 430, 768, 900, 1024, 1366, 1440, 1920]
 EXTERNAL_EXPECTED = {
@@ -26,7 +27,7 @@ EXTERNAL_EXPECTED = {
     "https://www.hud.gov/",
     "https://mountainline.com/",
     "https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform",
-    "https://www.indeed.com/viewjob?jk=b645ab34482aea27&from=shareddesktop_copy",
+    "https://www.indeed.com/viewjob?jk=b645ab34482aea27",
 }
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -35,7 +36,13 @@ class QuietHandler(SimpleHTTPRequestHandler):
 
 
 def main():
-    server = ThreadingHTTPServer(("127.0.0.1", 0), lambda *args, **kwargs: QuietHandler(*args, directory=str(ROOT), **kwargs))
+    parser = argparse.ArgumentParser(description="Run responsive and link QA against a static website directory.")
+    parser.add_argument("--root", type=Path, default=DEFAULT_ROOT, help="Directory to serve and test (defaults to the repository root).")
+    args = parser.parse_args()
+    root = args.root.resolve()
+    if not (root / "index.html").is_file():
+        parser.error(f"--root must contain index.html: {root}")
+    server = ThreadingHTTPServer(("127.0.0.1", 0), lambda *server_args, **kwargs: QuietHandler(*server_args, directory=str(root), **kwargs))
     Thread(target=server.serve_forever, daemon=True).start()
     base = f"http://127.0.0.1:{server.server_port}"
     results = {"pages": [], "overflow": [], "page_errors": [], "console_errors": [], "failed_local_requests": [], "broken_images": [], "internal_links": [], "external_links": [], "journeys": {}, "accessibility": []}
@@ -55,6 +62,11 @@ def main():
                     if response is None or response.status != 200:
                         results["pages"].append({"path": path, "width": width, "status": response.status if response else None})
                         continue
+                    page.evaluate("""async () => {
+                      const images = [...document.images];
+                      images.forEach(image => { image.loading = 'eager'; });
+                      await Promise.all(images.map(image => image.decode().catch(() => {})));
+                    }""")
                     state = page.evaluate("""() => ({inner:innerWidth, doc:document.documentElement.scrollWidth, body:document.body.scrollWidth, title:document.title, h1:[...document.querySelectorAll('h1')].map(x=>x.innerText), broken:[...document.images].filter(x=>!x.complete || !x.naturalWidth).map(x=>x.currentSrc), duplicateIds:[...document.querySelectorAll('[id]')].map(x=>x.id).filter((x,i,a)=>a.indexOf(x)!==i), unnamed:[...document.querySelectorAll('a,button')].filter(x=>!(x.innerText||x.getAttribute('aria-label')||x.getAttribute('title'))).map(x=>x.outerHTML.slice(0,120))})""")
                     results["pages"].append({"path": path, "width": width, "status": response.status, "title": state["title"]})
                     if state["doc"] > state["inner"] + 1 or state["body"] > state["inner"] + 1:
@@ -148,7 +160,7 @@ def main():
                         if fragment not in ids:
                             results["internal_links"].append({"source": path, "href": href, "issue": "missing_fragment"})
                     elif fragment and target_path in ("", "/"):
-                        home_html = (ROOT / "index.html").read_text(encoding="utf-8-sig")
+                        home_html = (root / "index.html").read_text(encoding="utf-8-sig")
                         if not re.search(rf'\bid=["\']{re.escape(fragment)}["\']', home_html):
                             results["internal_links"].append({"source": path, "href": href, "issue": "missing_home_fragment"})
 
@@ -158,7 +170,7 @@ def main():
             results["external_links"] = [{"url": url, "present": True} for url in sorted(external_found)]
 
             # Check standalone assets and the protected portal landing route without following sign-in.
-            required_assets = ["/styles.css", "/script.js", "/anchor-logo.png", "/alex-ceo-picture.png", "/assets/anchor-support-housing-navigator-tenancy-support-specialist-job-description.pdf"]
+            required_assets = ["/styles.css", "/script.js", "/anchor-logo.png", "/anchor-logo-display.webp", "/anchor-favicon.png", "/alex-ceo-picture.png", "/alex-ceo-picture-display.webp", "/assets/anchor-support-housing-navigator-tenancy-support-specialist-job-description.pdf"]
             for asset in required_assets:
                 response = page.request.get(base + asset)
                 if response.status != 200:
@@ -179,6 +191,12 @@ def main():
                 on_careers = urlparse(page.url).path == "/careers/" and page.get_by_role("heading", name="Housing Navigator / Tenancy Support Specialist").count() == 1
                 text = page.locator("body").inner_text()
                 content_present = all(s in text for s in ["Minimum qualifications", "Preferred qualifications", "What the work can look like", "$17.00-$18.00", "$18.00-$20.00", "twelve (12) months", "no guaranteed minimum paid hours"])
+                apply_button = page.locator('a.button[aria-label^="Apply on Indeed"]').first
+                apply_top = apply_button.evaluate("element => element.getBoundingClientRect().top")
+                pay_top = page.locator(".careers-hero-pay").evaluate("element => element.getBoundingClientRect().top")
+                intake_top = page.locator(".careers-hero .paused-notice").evaluate("element => element.getBoundingClientRect().top")
+                compact_intro = page.locator(".careers-hero-intro-compact").is_visible() if width <= 600 else True
+                apply_early = apply_top < pay_top and apply_top < intake_top and (width > 600 or apply_top < page.evaluate("innerHeight"))
                 download_link = page.get_by_role("link", name="Download Job Description (PDF)").first
                 href = download_link.get_attribute("href")
                 with page.expect_download() as download_info:
@@ -189,7 +207,7 @@ def main():
                     download.save_as(target)
                     download_ok = target.read_bytes().startswith(b"%PDF-") and target.stat().st_size > 1000
                 indeed_links = page.locator('a.button[aria-label^="Apply on Indeed"]').evaluate_all("els => els.map(x => ({href:x.href, target:x.target, rel:x.rel}))")
-                indeed_ok = len(indeed_links) == 2 and all(link["href"] == "https://www.indeed.com/viewjob?jk=b645ab34482aea27&from=shareddesktop_copy" and link["target"] == "_blank" and {"noopener", "noreferrer"}.issubset(set(link["rel"].split())) for link in indeed_links) and page.locator('a[href^="mailto:alex@"]').count() == 0 and "All employment applications are processed through Indeed. Please submit your resume and application using the link above. Employment applications are not accepted through our general contact form or business email." in text and page.get_by_role("heading", name="Careers at Anchor Support Service").count() == 1 and "Community-Based and Approved Remote Work" in text and "Help individuals experiencing homelessness or housing instability obtain and maintain housing through housing assessments, individualized planning, housing searches, rental applications, landlord communication, community resource coordination, and ongoing tenancy support." in text
+                indeed_ok = len(indeed_links) == 2 and all(link["href"] == "https://www.indeed.com/viewjob?jk=b645ab34482aea27" and link["target"] == "_blank" and {"noopener", "noreferrer"}.issubset(set(link["rel"].split())) for link in indeed_links) and page.locator('a[href^="mailto:alex@"]').count() == 0 and "All employment applications are processed through Indeed. Please submit your resume and application using the link above. Employment applications are not accepted through our general contact form or business email." in text and page.get_by_role("heading", name="Careers at Anchor Support Service").count() == 1 and "Community-Based and Approved Remote Work" in text and "Help individuals experiencing homelessness or housing instability obtain and maintain housing through housing assessments, individualized planning, housing searches, rental applications, landlord communication, community resource coordination, and ongoing tenancy support." in text
                 menu_policy_ok = True
                 if width <= 768:
                     page.locator(".nav-toggle").click()
@@ -214,7 +232,7 @@ def main():
                     z = page.evaluate("({inner:innerWidth,scroll:document.documentElement.scrollWidth})")
                     if z["scroll"] > z["inner"] + 1:
                         overflow_after_zoom.append({"width": zoom_width, **z})
-                results["journeys"][label] = {"hiring_visible": hiring_visible, "careers_navigation": on_careers, "position_content": content_present, "pdf_download": download_ok, "pdf_href": href, "indeed_application": indeed_ok, "mobile_menu_to_policy": menu_policy_ok, "policy_readable": policy_ok, "policy_contact_section": policy_contact_ok, "contact_links_and_client_pause": contact_ok, "zoom_overflow": overflow_after_zoom}
+                results["journeys"][label] = {"hiring_visible": hiring_visible, "careers_navigation": on_careers, "position_content": content_present, "pdf_download": download_ok, "pdf_href": href, "indeed_application": indeed_ok, "mobile_intro_compact": compact_intro, "apply_button_visible_early": apply_early, "mobile_menu_to_policy": menu_policy_ok, "policy_readable": policy_ok, "policy_contact_section": policy_contact_ok, "contact_links_and_client_pause": contact_ok, "zoom_overflow": overflow_after_zoom}
 
             # Founder bio and key brand image checks.
             page.set_viewport_size({"width": 390, "height": 844})
@@ -243,7 +261,7 @@ def main():
     summary = {"page_count": len(results["pages"]), "viewports": VIEWPORTS, "overflow": results["overflow"], "page_errors": results["page_errors"], "console_errors": results["console_errors"], "failed_local_requests": results["failed_local_requests"], "broken_images": results["broken_images"], "internal_links": results["internal_links"], "external_link_count": len(results["external_links"]), "journeys": results["journeys"], "accessibility": results["accessibility"]}
     print(json.dumps(summary, indent=2))
     failed = bool(results["overflow"] or results["page_errors"] or results["console_errors"] or results["failed_local_requests"] or results["broken_images"] or results["internal_links"] or results["accessibility"])
-    failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("indeed_application"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_and_client_pause")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
+    failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("indeed_application"),v.get("mobile_intro_compact"),v.get("apply_button_visible_early"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_and_client_pause")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
     raise SystemExit(1 if failed else 0)
 
 if __name__ == "__main__":
