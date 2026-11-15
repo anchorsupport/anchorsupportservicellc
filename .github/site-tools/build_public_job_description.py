@@ -149,7 +149,7 @@ class PublicJobDoc(BaseDocTemplate):
         canvas.line(self.leftMargin, .49 * inch, letter[0] - self.rightMargin, .49 * inch)
         canvas.setFont("Vera", 7.1)
         canvas.setFillColor(MUTED)
-        canvas.drawString(self.leftMargin, .32 * inch, "Anchor Support Service LLC  |  anchorsupportservice.com  |  alex@anchorsupportservice.com")
+        canvas.drawString(self.leftMargin, .32 * inch, "Anchor Support Service LLC  |  anchorsupportservice.com/careers/")
         canvas.drawRightString(letter[0] - self.rightMargin, .32 * inch, f"Page {doc.page}")
         canvas.restoreState()
 
@@ -265,11 +265,8 @@ story += section("Equal employment", [
 
 apply_block = [
     P("How to apply", "Section"),
-    P("Interested in joining Anchor Support Service? Email your résumé and a brief introduction to:", "BodySmall"),
-    P("<link href='mailto:alex@anchorsupportservice.com' color='#06375d'><b>alex@anchorsupportservice.com</b></link>", "Callout"),
-    P("To request the complete job description, please email the same address.", "BodySmall"),
-    P("Suggested subject: <b>Housing Navigator - Resume</b>", "BodySmall"),
-    P("Please do not email Social Security numbers, dates of birth, medical information, or other unnecessary sensitive personal information.", "BodySmall"),
+    P("<link href='https://www.indeed.com/viewjob?jk=b645ab34482aea27&amp;from=shareddesktop_copy' color='#06375d'><b>Apply on Indeed</b></link>", "Callout"),
+    P("All employment applications are processed through Indeed. Please submit your resume and application using the link above. Employment applications are not accepted through our general contact form or business email.", "BodySmall"),
 ]
 story.append(KeepTogether(apply_block))
 

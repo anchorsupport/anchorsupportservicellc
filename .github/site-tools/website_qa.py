@@ -26,6 +26,7 @@ EXTERNAL_EXPECTED = {
     "https://www.hud.gov/",
     "https://mountainline.com/",
     "https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform",
+    "https://www.indeed.com/viewjob?jk=b645ab34482aea27&from=shareddesktop_copy",
 }
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -121,7 +122,7 @@ def main():
                     absolute = urljoin(page.url, href)
                     parts = urlparse(absolute)
                     if parts.scheme in ("mailto", "tel"):
-                        allowed_mailboxes = {"info@anchorsupportservice.com", "alex@anchorsupportservice.com"} if path.startswith("/careers") else {"info@anchorsupportservice.com"}
+                        allowed_mailboxes = {"info@anchorsupportservice.com"}
                         if parts.scheme == "mailto" and parts.path.lower() not in allowed_mailboxes:
                             results["internal_links"].append({"source": path, "href": href, "issue": "unexpected_mailto"})
                         if parts.scheme == "tel" and re.sub(r"\D", "", parts.path) != "4062197035":
@@ -187,9 +188,8 @@ def main():
                     target = Path(d) / download.suggested_filename
                     download.save_as(target)
                     download_ok = target.read_bytes().startswith(b"%PDF-") and target.stat().st_size > 1000
-                email_hrefs = page.locator('a[href^="mailto:"]').evaluate_all("els => els.map(x=>x.href)")
-                application_copy_ok = "alex@anchorsupportservice.com" in text and page.locator('a.button[href^="mailto:info@anchorsupportservice.com"]').count() == 0
-                mailto_ok = application_copy_ok and page.get_by_role("link", name="Email Your Résumé").count() == 2 and all(u == "mailto:alex@anchorsupportservice.com?subject=Housing%20Navigator%20-%20Resume" for u in page.locator('a.button-primary[href^="mailto:"]').evaluate_all("els => els.map(x=>x.getAttribute('href'))")) and "Interested in joining Anchor Support Service? Email your résumé and a brief introduction to alex@anchorsupportservice.com. To request the complete job description, please email the same address." in text
+                indeed_links = page.locator('a.button[aria-label^="Apply on Indeed"]').evaluate_all("els => els.map(x => ({href:x.href, target:x.target, rel:x.rel}))")
+                indeed_ok = len(indeed_links) == 2 and all(link["href"] == "https://www.indeed.com/viewjob?jk=b645ab34482aea27&from=shareddesktop_copy" and link["target"] == "_blank" and {"noopener", "noreferrer"}.issubset(set(link["rel"].split())) for link in indeed_links) and page.locator('a[href^="mailto:alex@"]').count() == 0 and "All employment applications are processed through Indeed. Please submit your resume and application using the link above. Employment applications are not accepted through our general contact form or business email." in text and page.get_by_role("heading", name="Careers at Anchor Support Service").count() == 1 and "Community-Based and Approved Remote Work" in text and "Help individuals experiencing homelessness or housing instability obtain and maintain housing through housing assessments, individualized planning, housing searches, rental applications, landlord communication, community resource coordination, and ongoing tenancy support." in text
                 menu_policy_ok = True
                 if width <= 768:
                     page.locator(".nav-toggle").click()
@@ -214,7 +214,7 @@ def main():
                     z = page.evaluate("({inner:innerWidth,scroll:document.documentElement.scrollWidth})")
                     if z["scroll"] > z["inner"] + 1:
                         overflow_after_zoom.append({"width": zoom_width, **z})
-                results["journeys"][label] = {"hiring_visible": hiring_visible, "careers_navigation": on_careers, "position_content": content_present, "pdf_download": download_ok, "pdf_href": href, "application_mailto": mailto_ok, "mobile_menu_to_policy": menu_policy_ok, "policy_readable": policy_ok, "policy_contact_section": policy_contact_ok, "contact_links_and_client_pause": contact_ok, "zoom_overflow": overflow_after_zoom}
+                results["journeys"][label] = {"hiring_visible": hiring_visible, "careers_navigation": on_careers, "position_content": content_present, "pdf_download": download_ok, "pdf_href": href, "indeed_application": indeed_ok, "mobile_menu_to_policy": menu_policy_ok, "policy_readable": policy_ok, "policy_contact_section": policy_contact_ok, "contact_links_and_client_pause": contact_ok, "zoom_overflow": overflow_after_zoom}
 
             # Founder bio and key brand image checks.
             page.set_viewport_size({"width": 390, "height": 844})
@@ -243,7 +243,7 @@ def main():
     summary = {"page_count": len(results["pages"]), "viewports": VIEWPORTS, "overflow": results["overflow"], "page_errors": results["page_errors"], "console_errors": results["console_errors"], "failed_local_requests": results["failed_local_requests"], "broken_images": results["broken_images"], "internal_links": results["internal_links"], "external_link_count": len(results["external_links"]), "journeys": results["journeys"], "accessibility": results["accessibility"]}
     print(json.dumps(summary, indent=2))
     failed = bool(results["overflow"] or results["page_errors"] or results["console_errors"] or results["failed_local_requests"] or results["broken_images"] or results["internal_links"] or results["accessibility"])
-    failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("application_mailto"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_and_client_pause")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
+    failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("indeed_application"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_and_client_pause")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
     raise SystemExit(1 if failed else 0)
 
 if __name__ == "__main__":
