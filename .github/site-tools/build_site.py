@@ -19,6 +19,7 @@ PUBLIC_FILES = (
     "privacy-policy.html",
     "secure-paperwork.html",
     "careers/index.html",
+    "partners/index.html",
     "waivertrack/index.html",
     "styles.css",
     "script.js",

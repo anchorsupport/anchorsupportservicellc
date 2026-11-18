@@ -13,7 +13,7 @@ import tempfile
 from playwright.sync_api import sync_playwright
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[2]
-PAGES = ["/", "/careers/", "/policy.html", "/secure-paperwork.html", "/404.html"]
+PAGES = ["/", "/careers/", "/partners/", "/policy.html", "/secure-paperwork.html", "/404.html"]
 VIEWPORTS = [360, 375, 390, 430, 768, 900, 1024, 1366, 1440, 1920]
 EXTERNAL_EXPECTED = {
     "https://www.dphhs.mt.gov/medicaidchanges/",
@@ -109,6 +109,8 @@ def main():
                                 results["accessibility"].append({"path": path, "width": width, "issue": "aria_expanded_not_set"})
                             if not page.locator('.site-nav a[href="/careers/"]').is_visible():
                                 results["accessibility"].append({"path": path, "width": width, "issue": "careers_missing_from_mobile_menu"})
+                            if not page.locator('.site-nav a[href="/partners/"]').is_visible():
+                                results["accessibility"].append({"path": path, "width": width, "issue": "partners_missing_from_mobile_menu"})
                             if not page.locator('.site-nav a[href="/policy.html"]').is_visible():
                                 results["accessibility"].append({"path": path, "width": width, "issue": "privacy_missing_from_mobile_menu"})
                             toggle.click()
@@ -117,6 +119,8 @@ def main():
                     if width >= 1366:
                         if not page.locator('.site-nav a[href="/careers/"]').is_visible():
                             results["accessibility"].append({"path": path, "width": width, "issue": "careers_missing_from_desktop_nav"})
+                        if not page.locator('.site-nav a[href="/partners/"]').is_visible():
+                            results["accessibility"].append({"path": path, "width": width, "issue": "partners_missing_from_desktop_nav"})
                         if page.locator(".nav-toggle").is_visible():
                             results["accessibility"].append({"path": path, "width": width, "issue": "desktop_menu_toggle_visible"})
 
@@ -246,6 +250,15 @@ def main():
             no_stale_intake_pause = all(not stale_pause_copy.search(file.read_text(encoding="utf-8")) for file in public_html)
             results["journeys"]["new_client_intake"] = {"homepage_notice": intake_notice_ok, "secure_steps_and_no_unverified_embeds": secure_intake_ok, "secure_route_noindex_nofollow": secure_meta == "noindex, nofollow", "no_stale_pause_copy": no_stale_intake_pause}
 
+            page.set_viewport_size({"width": 390, "height": 844})
+            page.goto(base + "/", wait_until="networkidle")
+            home_partner_link = page.locator('.partner-callout a[href="/partners/"]').count() == 1
+            page.goto(base + "/partners/", wait_until="networkidle")
+            partner_text = page.locator("main").inner_text()
+            partner_content_ok = all(s in partner_text for s in ["Supporting Successful Tenancies. Strengthening Landlord Relationships.", "Communication Support", "Eviction Risk Reduction", "Lease Education", "Housing Stability", "Community Coordination", "WHEN A TENANCY IS AT RISK", "Communication coaching", "Help organizing housing notices and paperwork", "Budgeting and housing-retention planning", "qualified legal assistance", "Anchor does not directly pay ongoing rent or rental arrears.", "does not guarantee rental payments or co-sign leases", "does not provide legal advice or legal representation", "not a landlord, property manager, or enforcement agency", "cannot guarantee tenant compliance or specific housing outcomes", "cannot guarantee financial assistance or housing placement", "Client-specific communication requires appropriate client authorization", "No landlord is required to waive lawful rental standards", "Additional Partnership Resources Coming Soon", "opportunities for collaboration", "Do not send confidential client information through a website form or ordinary email"])
+            partner_contact_ok = page.locator('#partner-contact a[href="tel:4062197035"]').count() == 1 and page.locator('#partner-contact a[href="mailto:info@anchorsupportservice.com"]').count() == 1 and page.locator('#partner-contact form').count() == 0 and page.locator('meta[name="robots"]').get_attribute("content") == "index, follow"
+            results["journeys"]["partners_page"] = {"homepage_callout": home_partner_link, "content_scope_and_limitations": partner_content_ok, "verified_contact_links_no_form": partner_contact_ok}
+
             # Founder bio and key brand image checks.
             page.set_viewport_size({"width": 390, "height": 844})
             page.goto(base + "/", wait_until="networkidle")
@@ -276,6 +289,9 @@ def main():
     failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("indeed_application"),v.get("mobile_intro_compact"),v.get("apply_button_visible_early"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_and_intake_notice")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
     intake = results["journeys"].get("new_client_intake", {})
     failed = failed or not all(intake.get(key) for key in ("homepage_notice", "secure_steps_and_no_unverified_embeds", "secure_route_noindex_nofollow", "no_stale_pause_copy"))
+    partners = results["journeys"].get("partners_page", {})
+    failed = failed or not all(partners.get(key) for key in ("homepage_callout", "content_scope_and_limitations", "verified_contact_links_no_form"))
+
     raise SystemExit(1 if failed else 0)
 
 if __name__ == "__main__":
