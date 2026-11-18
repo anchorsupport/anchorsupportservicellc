@@ -300,6 +300,14 @@ def main():
 
             page.set_viewport_size({"width": 390, "height": 844})
             page.goto(base + "/", wait_until="networkidle")
+            hero_questionnaire = page.locator('.hero-actions a[href="https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform"]')
+            hero_questionnaire_box = hero_questionnaire.bounding_box() if hero_questionnaire.count() == 1 else None
+            results["journeys"]["homepage_questionnaire"] = {
+                "visible_near_top": hero_questionnaire.count() == 1 and hero_questionnaire.is_visible() and hero_questionnaire_box is not None and 0 <= hero_questionnaire_box["y"] < 844,
+                "opens_safely_in_new_tab": hero_questionnaire.get_attribute("target") == "_blank" and "noopener" in (hero_questionnaire.get_attribute("rel") or ""),
+                "sensitive_information_warning": "Do not include sensitive medical, Medicaid, or identifying information" in page.locator(".hero-questionnaire-note").inner_text(),
+                "contact_section_link_retained": page.locator('#contact a[href="https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform"]').count() == 1,
+            }
             home_partner_link = page.locator('.partner-callout a[href="/partners/"]').count() == 1
             page.goto(base + "/partners/", wait_until="networkidle")
             partner_text = page.locator("main").inner_text()
@@ -314,8 +322,12 @@ def main():
             results["journeys"]["skip_link_keyboard_focus"] = page.evaluate("document.activeElement.classList.contains('skip-link') && document.activeElement.matches(':focus-visible')")
             founder = page.locator(".team-photo")
             if founder.count():
+                founder.scroll_into_view_if_needed()
+                founder.wait_for(state="visible")
+                page.wait_for_function("img => img.complete && img.naturalWidth > 0", arg=founder.element_handle(), timeout=10000)
                 if founder.evaluate("x => x.complete && x.naturalWidth > 0") is not True:
                     results["broken_images"].append({"path": "/", "images": ["alex-ceo-picture.png"]})
+                results["journeys"]["founder_photo_mobile"] = founder.evaluate("x => ({loaded: x.complete && x.naturalWidth > 0, width: x.naturalWidth, height: x.naturalHeight, currentSrc: x.currentSrc})")
                 if not founder.get_attribute("alt"):
                     results["accessibility"].append({"path": "/", "issue": "founder_image_missing_alt"})
             bio = page.locator(".bio-details")
@@ -335,6 +347,8 @@ def main():
     print(json.dumps(summary, indent=2))
     failed = bool(results["overflow"] or results["page_errors"] or results["console_errors"] or results["failed_local_requests"] or results["broken_images"] or results["internal_links"] or results["accessibility"])
     failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("indeed_application"),v.get("mobile_intro_compact"),v.get("apply_button_visible_early"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_intake_notice_and_questionnaire")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
+    failed = failed or not all(results["journeys"].get("homepage_questionnaire", {}).values())
+    failed = failed or not results["journeys"].get("founder_photo_mobile", {}).get("loaded", False)
     intake = results["journeys"].get("new_client_intake", {})
     failed = failed or not all(intake.get(key) for key in ("homepage_notice", "secure_steps_and_online_forms_unavailable", "no_jotform_or_invitation_links_published", "secure_route_noindex_nofollow", "no_stale_pause_copy"))
     partners = results["journeys"].get("partners_page", {})

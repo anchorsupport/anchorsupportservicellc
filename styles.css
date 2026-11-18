@@ -2327,6 +2327,14 @@ textarea {
   min-height: 46px;
 }
 
+.hero-questionnaire-note {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin: 0.55rem 0 0;
+  max-width: 46rem;
+}
+
 .hero-card.home-hiring-callout {
   background: var(--white);
   border: 1px solid rgba(26, 166, 166, 0.38);
