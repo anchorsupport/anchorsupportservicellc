@@ -34,6 +34,8 @@ The intake page retains the Step 1 Medicaid Consent then Step 2 TSS Referral / P
 
 An earlier anonymous read-only check observed some non-empty fields in the supplied forms. **That observation alone is not evidence of a privacy incident. No field contents were inspected, exposed, recorded, or submitted.** The authorized Jotform administrator must determine whether any prefilled content is an intentional organization-level default or applicant-specific information by inspecting form configuration in the authenticated account and confirming with safe synthetic sessions only. No actual applicant values should be copied into this review or shared during verification.
 
+The supplied invite-path URLs appeared in earlier pushed branch commit `1fe7784`. They have been removed from the current website source and generated public output, but remain in Git history; this update does not rewrite branch history. That fact does not establish applicant-data exposure. The Jotform administrator should determine whether those URLs are invitation-specific and invalidate/reissue them if appropriate under Anchor's process.
+
 An authorized Jotform administrator must verify and document all of the following before enabling online paperwork:
 
 1. In the live account, confirm both forms are active and obtain current reusable public Share → Embed URLs, not invitation-specific links. Verify fresh sessions are separate and do not expose prior applicants' information. Use synthetic data only. Do not publish these URLs until confirmed reusable and safe.
