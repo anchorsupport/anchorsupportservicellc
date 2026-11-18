@@ -26,7 +26,6 @@ EXTERNAL_EXPECTED = {
     "https://montanafairhousing.org/",
     "https://www.hud.gov/",
     "https://mountainline.com/",
-    "https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform",
     "https://www.indeed.com/viewjob?jk=b645ab34482aea27",
 }
 
@@ -194,9 +193,8 @@ def main():
                 apply_button = page.locator('a.button[aria-label^="Apply on Indeed"]').first
                 apply_top = apply_button.evaluate("element => element.getBoundingClientRect().top")
                 pay_top = page.locator(".careers-hero-pay").evaluate("element => element.getBoundingClientRect().top")
-                intake_top = page.locator(".careers-hero .paused-notice").evaluate("element => element.getBoundingClientRect().top")
                 compact_intro = page.locator(".careers-hero-intro-compact").is_visible() if width <= 600 else True
-                apply_early = apply_top < pay_top and apply_top < intake_top and (width > 600 or apply_top < page.evaluate("innerHeight"))
+                apply_early = apply_top < pay_top and (width > 600 or apply_top < page.evaluate("innerHeight"))
                 download_link = page.get_by_role("link", name="Download Job Description (PDF)").first
                 href = download_link.get_attribute("href")
                 with page.expect_download() as download_info:
@@ -224,7 +222,7 @@ def main():
                 page.goto(base + "/#contact", wait_until="networkidle")
                 contact_text = page.locator("#contact").inner_text()
                 office_text = page.locator(".office-update-card").inner_text()
-                contact_ok = all(s in contact_text for s in ["(406) 219-7035", "(406) 540-7982", "info@anchorsupportservice.com", "paused from accepting new clients", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available", "PO Box 17021", "3150 Great Northern Loop"]) and all(s.casefold() in office_text.casefold() for s in ["Office Location Update", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available"]) and page.locator('#contact a[href^="https://www.google.com/maps/search/"]').count() == 1 and page.locator('.office-update-card a[href^="https://www.google.com/maps/search/"]').count() == 1
+                contact_ok = all(s in contact_text for s in ["(406) 219-7035", "(406) 540-7982", "info@anchorsupportservice.com", "accepting new-client inquiries", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available", "PO Box 17021", "3150 Great Northern Loop"]) and all(s.casefold() in office_text.casefold() for s in ["Office Location Update", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available"]) and page.locator('#contact a[href^="https://www.google.com/maps/search/"]').count() == 1 and page.locator('.office-update-card a[href^="https://www.google.com/maps/search/"]').count() == 1
                 page.goto(base + "/policy.html", wait_until="networkidle")
                 overflow_after_zoom = []
                 for zoom_width in [int(width/1.25), int(width/2)] if width <= 430 else []:
@@ -232,7 +230,21 @@ def main():
                     z = page.evaluate("({inner:innerWidth,scroll:document.documentElement.scrollWidth})")
                     if z["scroll"] > z["inner"] + 1:
                         overflow_after_zoom.append({"width": zoom_width, **z})
-                results["journeys"][label] = {"hiring_visible": hiring_visible, "careers_navigation": on_careers, "position_content": content_present, "pdf_download": download_ok, "pdf_href": href, "indeed_application": indeed_ok, "mobile_intro_compact": compact_intro, "apply_button_visible_early": apply_early, "mobile_menu_to_policy": menu_policy_ok, "policy_readable": policy_ok, "policy_contact_section": policy_contact_ok, "contact_links_and_client_pause": contact_ok, "zoom_overflow": overflow_after_zoom}
+                results["journeys"][label] = {"hiring_visible": hiring_visible, "careers_navigation": on_careers, "position_content": content_present, "pdf_download": download_ok, "pdf_href": href, "indeed_application": indeed_ok, "mobile_intro_compact": compact_intro, "apply_button_visible_early": apply_early, "mobile_menu_to_policy": menu_policy_ok, "policy_readable": policy_ok, "policy_contact_section": policy_contact_ok, "contact_links_and_intake_notice": contact_ok, "zoom_overflow": overflow_after_zoom}
+
+            page.set_viewport_size({"width": 390, "height": 844})
+            page.goto(base + "/", wait_until="networkidle")
+            intake_notice_ok = "New client inquiries are open." in page.locator(".intake-notice").inner_text() and page.locator('.intake-notice').count() == 1
+            page.goto(base + "/secure-paperwork.html", wait_until="networkidle")
+            secure_meta = page.locator('meta[name="robots"]').get_attribute("content")
+            secure_text = page.locator("main").inner_text()
+            steps_text = page.locator(".paperwork-step").evaluate_all("els => els.map(el => el.textContent)")
+            steps_text = " ".join(steps_text).strip()
+            secure_intake_ok = secure_meta == "noindex, nofollow" and all(s in secure_text + " " + steps_text for s in ["Step 1", "Medicaid Eligibility Consent", "Step 2", "TSS Prior Authorization Paperwork", "only after Medicaid eligibility has been reviewed", "not currently linked here"]) and page.locator(".paperwork-step").count() == 2 and page.locator("iframe").count() == 0 and page.locator("form").count() == 0 and page.locator('a[href="tel:4062197035"]').count() >= 1
+            stale_pause_copy = re.compile(r"paused from accepting new clients|new client pause|intake (?:is )?paused|paperwork (?:is )?paused", re.I)
+            public_html = [root / "index.html", root / "careers" / "index.html", root / "secure-paperwork.html"]
+            no_stale_intake_pause = all(not stale_pause_copy.search(file.read_text(encoding="utf-8")) for file in public_html)
+            results["journeys"]["new_client_intake"] = {"homepage_notice": intake_notice_ok, "secure_steps_and_no_unverified_embeds": secure_intake_ok, "secure_route_noindex_nofollow": secure_meta == "noindex, nofollow", "no_stale_pause_copy": no_stale_intake_pause}
 
             # Founder bio and key brand image checks.
             page.set_viewport_size({"width": 390, "height": 844})
@@ -261,7 +273,9 @@ def main():
     summary = {"page_count": len(results["pages"]), "viewports": VIEWPORTS, "overflow": results["overflow"], "page_errors": results["page_errors"], "console_errors": results["console_errors"], "failed_local_requests": results["failed_local_requests"], "broken_images": results["broken_images"], "internal_links": results["internal_links"], "external_link_count": len(results["external_links"]), "journeys": results["journeys"], "accessibility": results["accessibility"]}
     print(json.dumps(summary, indent=2))
     failed = bool(results["overflow"] or results["page_errors"] or results["console_errors"] or results["failed_local_requests"] or results["broken_images"] or results["internal_links"] or results["accessibility"])
-    failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("indeed_application"),v.get("mobile_intro_compact"),v.get("apply_button_visible_early"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_and_client_pause")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
+    failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("indeed_application"),v.get("mobile_intro_compact"),v.get("apply_button_visible_early"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_and_intake_notice")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
+    intake = results["journeys"].get("new_client_intake", {})
+    failed = failed or not all(intake.get(key) for key in ("homepage_notice", "secure_steps_and_no_unverified_embeds", "secure_route_noindex_nofollow", "no_stale_pause_copy"))
     raise SystemExit(1 if failed else 0)
 
 if __name__ == "__main__":

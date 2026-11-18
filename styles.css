@@ -409,7 +409,8 @@ textarea {
   max-width: 640px;
 }
 
-.paused-notice {
+.paused-notice,
+.intake-notice {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-left: 4px solid var(--teal-bright);
@@ -2271,7 +2272,8 @@ textarea {
   margin-bottom: 0;
 }
 
-.hero-copy .paused-notice {
+.hero-copy .paused-notice,
+.hero-copy .intake-notice {
   margin-top: 1rem;
 }
 
@@ -2361,7 +2363,8 @@ textarea {
     line-height: 1.5;
   }
 
-  .hero-copy .paused-notice {
+  .hero-copy .paused-notice,
+  .hero-copy .intake-notice {
     padding: 0.75rem 0.85rem;
   }
 
