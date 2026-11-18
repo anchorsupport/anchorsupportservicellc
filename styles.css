@@ -2518,6 +2518,11 @@ textarea {
 }
 
 @media (max-width: 600px) {
+  .section-header h2 {
+    font-size: clamp(1.85rem, 7.5vw, 2.4rem);
+    line-height: 1.08;
+  }
+
   .hero {
     padding-block: 1.65rem 1.8rem;
   }
