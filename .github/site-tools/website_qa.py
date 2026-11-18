@@ -244,11 +244,25 @@ def main():
             secure_text = page.locator("main").inner_text()
             steps_text = page.locator(".paperwork-step").evaluate_all("els => els.map(el => el.textContent)")
             steps_text = " ".join(steps_text).strip()
-            secure_intake_ok = secure_meta == "noindex, nofollow" and all(s in secure_text + " " + steps_text for s in ["Step 1", "Medicaid Eligibility Consent", "Step 2", "TSS Prior Authorization Paperwork", "only after Medicaid eligibility has been reviewed", "not currently linked here"]) and page.locator(".paperwork-step").count() == 2 and page.locator("iframe").count() == 0 and page.locator("form").count() == 0 and page.locator('a[href="tel:4062197035"]').count() >= 1
+            template_checks = page.evaluate("""() => {
+              const expected = [
+                {id:'medicaid-signing-review', title:'Anchor Medicaid Eligibility Consent Form FINAL', src:'https://www.jotform.com/sign/262147427126051/invite/01kz4zvdp21ab4ea6182848483?signEmbed=1', full:'https://www.jotform.com/sign/262147427126051/invite/01kz4zvdp21ab4ea6182848483'},
+                {id:'tss-referral-signing-review', title:'TSS PA Prefilled Anchor Support 8.3.26', src:'https://www.jotform.com/sign/262147240572049/invite/01kz4zrqzrffb243dcb86ce3ee?signEmbed=1', full:'https://www.jotform.com/sign/262147240572049/invite/01kz4zrqzrffb243dcb86ce3ee'}
+              ];
+              return expected.map(item => {
+                const template=document.getElementById(item.id);
+                const frame=template?.content.querySelector('iframe');
+                const link=template?.content.querySelector('a');
+                return {id:item.id, exists:!!template, iframe:!!frame, title:frame?.title, src:frame?.getAttribute('src'), accessibleFullScreen:!!link && link.href===item.full, fullLinkText:link?.textContent.trim()||'', loading:frame?.getAttribute('loading'), widthStyle:frame?.getAttribute('style')||''};
+              });
+            }""")
+            staged_links_ok = len(template_checks) == 2 and template_checks[0]["exists"] and template_checks[0]["iframe"] and template_checks[0]["title"] == "Anchor Medicaid Eligibility Consent Form FINAL" and template_checks[0]["src"] == "https://www.jotform.com/sign/262147427126051/invite/01kz4zvdp21ab4ea6182848483?signEmbed=1" and template_checks[0]["accessibleFullScreen"] and template_checks[1]["exists"] and template_checks[1]["iframe"] and template_checks[1]["title"] == "TSS PA Prefilled Anchor Support 8.3.26" and template_checks[1]["src"] == "https://www.jotform.com/sign/262147240572049/invite/01kz4zrqzrffb243dcb86ce3ee?signEmbed=1" and template_checks[1]["accessibleFullScreen"] and all(x["loading"] == "lazy" and "width:100%" in x["widthStyle"] for x in template_checks)
+            active_signing_link = page.locator('a[href^="https://www.jotform.com/sign/"]').count() > 0
+            secure_intake_ok = secure_meta == "noindex, nofollow" and all(s in secure_text + " " + steps_text for s in ["Step 1", "Medicaid Eligibility Consent", "Step 2", "TSS Prior Authorization Paperwork", "only after Medicaid eligibility has been reviewed", "not technically access-restricted", "does not guarantee eligibility, Medicaid authorization, housing assistance"]) and page.locator(".paperwork-step").count() == 2 and page.locator("iframe").count() == 0 and page.locator("form").count() == 0 and page.locator('a[href="tel:4062197035"]').count() >= 1 and staged_links_ok and not active_signing_link
             stale_pause_copy = re.compile(r"paused from accepting new clients|new client pause|intake (?:is )?paused|paperwork (?:is )?paused", re.I)
             public_html = [root / "index.html", root / "careers" / "index.html", root / "secure-paperwork.html"]
             no_stale_intake_pause = all(not stale_pause_copy.search(file.read_text(encoding="utf-8")) for file in public_html)
-            results["journeys"]["new_client_intake"] = {"homepage_notice": intake_notice_ok, "secure_steps_and_no_unverified_embeds": secure_intake_ok, "secure_route_noindex_nofollow": secure_meta == "noindex, nofollow", "no_stale_pause_copy": no_stale_intake_pause}
+            results["journeys"]["new_client_intake"] = {"homepage_notice": intake_notice_ok, "secure_steps_and_no_unverified_embeds": secure_intake_ok, "staged_embed_snippets_and_full_screen_links": staged_links_ok, "no_active_signing_links": not active_signing_link, "secure_route_noindex_nofollow": secure_meta == "noindex, nofollow", "no_stale_pause_copy": no_stale_intake_pause}
 
             page.set_viewport_size({"width": 390, "height": 844})
             page.goto(base + "/", wait_until="networkidle")

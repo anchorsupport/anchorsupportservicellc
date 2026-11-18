@@ -40,26 +40,39 @@
       <div class="container">
         <div class="secure-action-card">
           <h2 id="secure-paperwork-title" tabindex="-1">Before completing paperwork</h2>
-          <p>Anchor is verifying its current secure signing links and privacy configuration. Until that review is complete, the forms below are not available from this page. Please call Anchor to discuss next steps.</p>
+          <p>The supplied signing links are staged for administrator review only. Anchor has not yet confirmed that they create separate blank applicant sessions or that the account privacy and routing settings are approved. Until those checks are complete, no online form or signing link is active on this page. Please call Anchor to discuss next steps.</p>
           <p><strong>Phone:</strong> <a href="tel:4062197035">(406) 219-7035</a><br /><strong>Email:</strong> <a href="mailto:info@anchorsupportservice.com">info@anchorsupportservice.com</a></p>
           <p class="privacy-warning">Do not send Social Security numbers, Medicaid numbers, medical records, legal documents, or other private records through ordinary email or the public contact form.</p>
         </div>
 
         <section class="secure-paperwork-section" aria-labelledby="paperwork-steps-title">
           <h2 id="paperwork-steps-title">Paperwork sequence</h2>
-          <p>When Anchor confirms the secure process is available, complete Step 1 first. Step 2 is completed only after Medicaid eligibility has been reviewed or when Anchor directs you to continue. Completing Step 1 does not authorize Step 2 or guarantee services.</p>
+          <p>When Anchor confirms the secure process is available, complete Step 1 first. Step 2 is completed only after Medicaid eligibility has been reviewed or when Anchor directs you to continue. Step 2 is not technically access-restricted while its public signing link is embedded. Completing either form does not guarantee eligibility, Medicaid authorization, housing assistance, or services.</p>
           <div class="paperwork-accordion">
             <details class="paperwork-step">
               <summary><span class="paperwork-step-number">Step 1</span><span class="paperwork-step-title">Medicaid Eligibility Consent</span><span class="paperwork-step-status">Secure link under verification</span></summary>
-              <div class="paperwork-step-content"><p>The consent form is not currently linked here. Call Anchor for next steps; do not use a saved invitation link.</p></div>
+              <div class="paperwork-step-content"><p>The supplied Step 1 embed and full-screen link are held in inactive review markup until Anchor verifies the signing session, account, privacy, and routing settings. Call Anchor for next steps; do not use a saved invitation link.</p></div>
             </details>
             <details class="paperwork-step">
               <summary><span class="paperwork-step-number">Step 2</span><span class="paperwork-step-title">TSS Prior Authorization Paperwork</span><span class="paperwork-step-status">Complete only when directed</span></summary>
-              <div class="paperwork-step-content"><p>This step follows Medicaid eligibility review or Anchor's direction to continue. Its secure link is under verification and is not currently linked here.</p></div>
+              <div class="paperwork-step-content"><p>This step follows Medicaid eligibility review or Anchor's direction to continue. Its supplied embed and full-screen link are held in inactive review markup pending the same verification. This public link is not technically access-restricted, so it must not be activated until the sequence and applicant-isolation checks pass.</p></div>
             </details>
           </div>
           <div class="secure-paperwork-actions"><a class="button button-primary" href="tel:4062197035">Call Anchor About Intake</a><a class="button button-link" href="/#services">Review Services</a></div>
         </section>
+        <!-- Inert review-only templates: content is not rendered, fetched, or available as an active signing link. -->
+        <template id="medicaid-signing-review">
+          <div class="jotform-embed-wrapper">
+            <iframe title="Anchor Medicaid Eligibility Consent Form FINAL" src="https://www.jotform.com/sign/262147427126051/invite/01kz4zvdp21ab4ea6182848483?signEmbed=1" class="secure-paperwork-frame" loading="lazy" style="width:100%; max-width:100%; min-height:750px; border:0;"></iframe>
+          </div>
+          <a href="https://www.jotform.com/sign/262147427126051/invite/01kz4zvdp21ab4ea6182848483" target="_blank" rel="noopener noreferrer">Open Medicaid Eligibility Consent in a full-screen signing page</a>
+        </template>
+        <template id="tss-referral-signing-review">
+          <div class="jotform-embed-wrapper">
+            <iframe title="TSS PA Prefilled Anchor Support 8.3.26" src="https://www.jotform.com/sign/262147240572049/invite/01kz4zrqzrffb243dcb86ce3ee?signEmbed=1" class="secure-paperwork-frame" loading="lazy" style="width:100%; max-width:100%; min-height:750px; border:0;"></iframe>
+          </div>
+          <a href="https://www.jotform.com/sign/262147240572049/invite/01kz4zrqzrffb243dcb86ce3ee" target="_blank" rel="noopener noreferrer">Open TSS Prior Authorization Paperwork in a full-screen signing page</a>
+        </template>
       </div>
     </section>
   </main>
