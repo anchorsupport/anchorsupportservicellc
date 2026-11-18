@@ -249,11 +249,21 @@ def main():
             secure_html = (root / "secure-paperwork.html").read_text(encoding="utf-8").casefold()
             secure_online_unavailable = "online paperwork is not yet available" in secure_text.casefold()
             no_published_jotform_link = "jotform.com" not in secure_html and "/invite/" not in secure_html
-            secure_intake_ok = secure_meta == "noindex, nofollow" and all(s in secure_text + " " + steps_text for s in ["Step 1", "Medicaid Eligibility Consent", "Step 2", "TSS Prior Authorization Paperwork", "only after Medicaid eligibility has been reviewed", "does not guarantee eligibility, Medicaid authorization, housing assistance"]) and secure_online_unavailable and no_published_jotform_link and page.locator(".paperwork-step").count() == 2 and page.locator("iframe").count() == 0 and page.locator("form").count() == 0 and page.locator('a[href="tel:4062197035"]').count() >= 1 and page.locator('a[href^="https://www.jotform.com/"]').count() == 0
+            steps = page.locator(".paperwork-step")
+            step1_open = steps.count() == 2 and steps.nth(0).evaluate("el => el.open")
+            step2_summary = steps.nth(1).locator("summary") if steps.count() == 2 else None
+            if step2_summary:
+                step2_summary.click()
+                step2_expands = steps.nth(1).evaluate("el => el.open")
+                step2_summary.click()
+                step2_collapses = not steps.nth(1).evaluate("el => el.open")
+            else:
+                step2_expands = step2_collapses = False
+            secure_intake_ok = secure_meta == "noindex, nofollow" and all(s in secure_text + " " + steps_text for s in ["Step 1", "Medicaid Eligibility Consent", "Step 2", "TSS Prior Authorization Paperwork", "only after Medicaid eligibility has been reviewed", "does not guarantee eligibility, Medicaid authorization, housing assistance"]) and secure_online_unavailable and no_published_jotform_link and steps.count() == 2 and step1_open and step2_expands and step2_collapses and page.locator("iframe").count() == 0 and page.locator("form").count() == 0 and page.locator('a[href="tel:4062197035"]').count() >= 1 and page.locator('a[href^="https://www.jotform.com/"]').count() == 0
             stale_pause_copy = re.compile(r"paused from accepting new clients|new client pause|intake (?:is )?paused|paperwork (?:is )?paused", re.I)
             public_html = [root / "index.html", root / "careers" / "index.html", root / "secure-paperwork.html"]
             no_stale_intake_pause = all(not stale_pause_copy.search(file.read_text(encoding="utf-8")) for file in public_html)
-            results["journeys"]["new_client_intake"] = {"homepage_notice": intake_notice_ok, "secure_steps_and_online_forms_unavailable": secure_intake_ok, "no_jotform_or_invitation_links_published": no_published_jotform_link, "secure_route_noindex_nofollow": secure_meta == "noindex, nofollow", "no_stale_pause_copy": no_stale_intake_pause}
+            results["journeys"]["new_client_intake"] = {"homepage_notice": intake_notice_ok, "secure_steps_and_online_forms_unavailable": secure_intake_ok, "step1_open": step1_open, "step2_expandable_and_collapsible": step2_expands and step2_collapses, "no_jotform_or_invitation_links_published": no_published_jotform_link, "secure_route_noindex_nofollow": secure_meta == "noindex, nofollow", "no_stale_pause_copy": no_stale_intake_pause}
 
             page.set_viewport_size({"width": 390, "height": 844})
             page.goto(base + "/", wait_until="networkidle")
