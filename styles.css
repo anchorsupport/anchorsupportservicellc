@@ -28,7 +28,6 @@ body {
     linear-gradient(90deg, rgba(0, 51, 95, 0.014) 1px, transparent 1px);
   background-size: 28px 28px;
   line-height: 1.6;
-  overflow-x: hidden;
 }
 
 html {
@@ -148,6 +147,8 @@ textarea {
   display: flex;
   align-items: center;
   gap: 1rem;
+  min-width: 0;
+  flex: 0 1 auto;
   text-decoration: none;
 }
 
@@ -165,12 +166,15 @@ textarea {
   display: flex;
   flex-direction: column;
   line-height: 1.15;
+  min-width: 0;
 }
 
 .brand-text strong {
   color: var(--white);
   font-weight: 800;
   font-size: 1rem;
+  max-width: 24ch;
+  overflow-wrap: normal;
 }
 
 .brand-text small {
@@ -204,6 +208,35 @@ textarea {
 
   .brand-text small {
     font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-header .container {
+    width: calc(100% - 24px);
+  }
+
+  .nav-inner {
+    gap: 0.5rem;
+  }
+
+  .brand {
+    flex: 1 1 auto;
+    gap: 0.5rem;
+  }
+
+  .site-logo {
+    height: 56px;
+    max-width: 56px;
+    padding: 3px;
+  }
+
+  .brand-text strong {
+    font-size: clamp(0.72rem, 3.7vw, 0.88rem);
+  }
+
+  .brand-text small {
+    font-size: 0.68rem;
   }
 }
 
@@ -401,6 +434,14 @@ textarea {
   letter-spacing: 0;
   margin: 0 0 22px;
   max-width: 850px;
+}
+
+.hero-supporting-heading {
+  color: rgba(255, 255, 255, 0.94);
+  font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: -0.35rem 0 0.75rem;
 }
 
 .hero-lead {
@@ -2174,22 +2215,22 @@ textarea {
 .careers-hero-pay span { color:rgba(255,255,255,.88); font-size:.95rem; font-weight:700; }
 .careers-hero .paused-notice { max-width:760px; }
 .careers-actions { flex-wrap:wrap; }
-.careers-facts,.careers-card,.careers-panel,.careers-preferred { background:var(--white); border:1px solid rgba(0,51,95,.11); border-radius:20px; box-shadow:0 14px 38px rgba(0,40,70,.07); color:var(--text); min-width:0; padding:1.35rem; }
+.careers-facts,.careers-card,.careers-panel,.careers-preferred { background:var(--white); border:1px solid #647c8b; border-radius:18px; box-shadow:0 10px 26px rgba(0,40,70,.09); color:var(--text); min-width:0; padding:1.5rem; }
 .careers-facts h2 { color:var(--navy); font-size:1.3rem; margin:0 0 1rem; }
 .careers-facts dl { display:grid; gap:.8rem; margin:0; }
 .careers-facts dl>div { border-top:1px solid rgba(0,51,95,.1); padding-top:.75rem; }
 .careers-facts dt { color:var(--muted); font-size:.75rem; font-weight:900; letter-spacing:.06em; margin-bottom:.2rem; text-transform:uppercase; }
 .careers-facts dd { color:var(--text); font-weight:700; line-height:1.55; margin:0; overflow-wrap:anywhere; }
-.careers-card-grid,.careers-qualification-grid { display:grid; gap:18px; grid-template-columns:repeat(3,minmax(0,1fr)); }
+.careers-card-grid,.careers-qualification-grid { display:grid; gap:20px; grid-template-columns:repeat(3,minmax(0,1fr)); }
 .careers-qualification-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 .careers-card h3,.careers-preferred h3 { color:var(--navy); font-size:1.1rem; margin:0 0 .6rem; }
 .careers-card p,.careers-panel p,.careers-supporting-copy,.careers-environment p,.careers-apply p { color:var(--muted); line-height:1.72; margin:0 0 .9rem; overflow-wrap:anywhere; }
 .careers-supporting-copy { margin-top:1rem; }
-.careers-preferred { background:var(--soft-cream); margin-top:1rem; }
+.careers-preferred { background:#eef6f5; border-color:var(--teal); margin-top:1.1rem; }
 .careers-preferred ul { margin:0; padding-left:1.2rem; }
 .careers-preferred li { color:var(--muted); line-height:1.65; margin:0 0 .45rem; overflow-wrap:anywhere; }
 .careers-preferred li::marker { color:var(--teal); }
-.careers-two-column { display:grid; gap:20px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.careers-two-column { display:grid; gap:24px; grid-template-columns:repeat(2,minmax(0,1fr)); }
 .careers-panel h2,.careers-environment h2,.careers-apply h2 { color:var(--navy); font-size:clamp(1.5rem,2.6vw,2rem); line-height:1.2; margin:0 0 1rem; }
 .careers-panel p:last-child,.careers-apply p:last-child { margin-bottom:0; }
 .careers-environment { max-width:900px; }
@@ -2521,6 +2562,16 @@ textarea {
   .section-header h2 {
     font-size: clamp(1.85rem, 7.5vw, 2.4rem);
     line-height: 1.08;
+  }
+
+  .careers-hero h1 {
+    font-size: clamp(1.9rem, 8vw, 2.65rem);
+    line-height: 1.08;
+    overflow-wrap: normal;
+  }
+
+  .hero-supporting-heading {
+    font-size: clamp(1.15rem, 5vw, 1.45rem);
   }
 
   .hero {

@@ -13,8 +13,8 @@ import tempfile
 from playwright.sync_api import sync_playwright
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[2]
-PAGES = ["/", "/careers/", "/partners/", "/policy.html", "/secure-paperwork.html", "/404.html"]
-VIEWPORTS = [360, 375, 390, 430, 768, 900, 1024, 1366, 1440, 1920]
+PAGES = ["/", "/careers/", "/partners/", "/policy.html", "/secure-paperwork.html", "/waivertrack/", "/404.html"]
+VIEWPORTS = [320, 360, 375, 390, 430, 768, 900, 1024, 1366, 1440, 1920]
 EXTERNAL_EXPECTED = {
     "https://www.dphhs.mt.gov/medicaidchanges/",
     "https://dphhs.mt.gov/heartwaiver",
@@ -75,7 +75,22 @@ def main():
                         const after = getComputedStyle(x, '::after');
                         return {tag:x.tagName, id:x.id, className:typeof x.className === 'string' ? x.className : '', text:(x.innerText||'').trim().slice(0,100), left:Math.round(r.left), right:Math.round(r.right), width:Math.round(r.width), clientWidth:x.clientWidth, scrollWidth:x.scrollWidth, display:s.display, position:s.position, before:before.content, after:after.content};
                       }).filter(x => x.display !== 'none' && (x.right > innerWidth + 1 || x.left < -1 || x.scrollWidth > x.clientWidth + 1)).slice(0,40);
-                      return {inner:innerWidth, doc:document.documentElement.scrollWidth, body:document.body.scrollWidth, title:document.title, h1:[...document.querySelectorAll('h1')].map(x=>x.innerText), broken:[...document.images].filter(x=>!x.complete || !x.naturalWidth).map(x=>x.currentSrc), duplicateIds:[...document.querySelectorAll('[id]')].map(x=>x.id).filter((x,i,a)=>a.indexOf(x)!==i), unnamed:[...document.querySelectorAll('a,button')].filter(x=>!(x.innerText||x.getAttribute('aria-label')||x.getAttribute('title'))).map(x=>x.outerHTML.slice(0,120)), overflowing};
+                      const brand = document.querySelector('.brand-text');
+                      const brandNameVisible = !!brand && getComputedStyle(brand).display !== 'none' && getComputedStyle(brand).visibility !== 'hidden' && brand.innerText.includes('Anchor Support Service LLC');
+                      const colorRgb = value => { const m = value.match(/[\\d.]+/g); return m ? m.slice(0,3).map(Number) : null; };
+                      const luminance = value => { const c = colorRgb(value); if (!c) return 0; const v = c.map(n => { n /= 255; return n <= .04045 ? n / 12.92 : ((n + .055) / 1.055) ** 2.4; }); return .2126*v[0] + .7152*v[1] + .0722*v[2]; };
+                      const contrast = (a,b) => { const x=luminance(a), y=luminance(b); return (Math.max(x,y)+.05)/(Math.min(x,y)+.05); };
+                      const backgroundOf = el => { for (let node=el; node; node=node.parentElement) { const c=getComputedStyle(node).backgroundColor; const m=c.match(/rgba?\\(([^)]+)\\)/); if (m) { const parts=m[1].split(',').map(Number); if (parts.length<4 || parts[3]>.99) return c; } } return 'rgb(255, 255, 255)'; };
+                      const contrastIssues = [];
+                      if (location.pathname === '/careers/') {
+                        for (const selector of ['.careers-facts dt','.careers-facts dd','.careers-card h3','.careers-card p','.careers-panel h2','.careers-panel p','.careers-preferred h3','.careers-preferred li']) {
+                          for (const el of document.querySelectorAll(selector)) { const fg=getComputedStyle(el).color, bg=backgroundOf(el), value=contrast(fg,bg); if (value < 4.5) contrastIssues.push({selector, text:el.innerText.trim().slice(0,80), foreground:fg, background:bg, ratio:+value.toFixed(2), required:4.5}); }
+                        }
+                        for (const selector of ['.careers-facts','.careers-card','.careers-panel','.careers-preferred']) {
+                          for (const el of document.querySelectorAll(selector)) { const s=getComputedStyle(el), bg=backgroundOf(el.parentElement), value=contrast(s.borderTopColor,bg); if (s.borderTopStyle !== 'none' && value < 3) contrastIssues.push({selector, issue:'card_boundary_contrast', border:s.borderTopColor, background:bg, ratio:+value.toFixed(2), required:3}); }
+                        }
+                      }
+                      return {inner:innerWidth, doc:document.documentElement.scrollWidth, body:document.body.scrollWidth, title:document.title, h1:[...document.querySelectorAll('h1')].map(x=>x.innerText), brandNameVisible, contrastIssues, broken:[...document.images].filter(x=>!x.complete || !x.naturalWidth).map(x=>x.currentSrc), duplicateIds:[...document.querySelectorAll('[id]')].map(x=>x.id).filter((x,i,a)=>a.indexOf(x)!==i), unnamed:[...document.querySelectorAll('a,button')].filter(x=>!(x.innerText||x.getAttribute('aria-label')||x.getAttribute('title'))).map(x=>x.outerHTML.slice(0,120)), overflowing};
                     }""")
                     results["pages"].append({"path": path, "width": width, "status": response.status, "title": state["title"]})
                     if state["doc"] > state["inner"] + 1 or state["body"] > state["inner"] + 1:
@@ -86,8 +101,16 @@ def main():
                         results["accessibility"].append({"path": path, "issue": "duplicate_ids", "ids": state["duplicateIds"]})
                     if state["unnamed"]:
                         results["accessibility"].append({"path": path, "issue": "unnamed_controls", "items": state["unnamed"]})
+                    if not state["brandNameVisible"]:
+                        results["accessibility"].append({"path": path, "width": width, "issue": "company_name_not_visible_in_shared_header"})
+                    if state["contrastIssues"]:
+                        results["accessibility"].append({"path": path, "width": width, "issue": "careers_contrast", "details": state["contrastIssues"]})
                     if len(state["h1"]) != 1:
                         results["accessibility"].append({"path": path, "issue": "h1_count", "count": len(state["h1"])})
+                    if path == "/" and state["h1"] != ["Anchor Support Service LLC"]:
+                        results["accessibility"].append({"path": path, "issue": "homepage_brand_h1_missing", "h1": state["h1"]})
+                    if path == "/careers/" and not any("Anchor Support Service LLC" in heading for heading in state["h1"]):
+                        results["accessibility"].append({"path": path, "issue": "careers_brand_h1_missing", "h1": state["h1"]})
 
                     if path == "/policy.html":
                         page.evaluate("window.scrollTo(0, Math.floor(document.documentElement.scrollHeight / 2))")
@@ -109,7 +132,8 @@ def main():
                         if policy_state["wrapperOpacity"] != "1" or policy_state["wrapperVisibility"] != "visible" or policy_state["panelOpacity"] != "1" or policy_state["panelVisibility"] != "visible" or policy_state["panelHeight"] <= 0 or policy_state["panelTextLength"] < 100:
                             results["accessibility"].append({"path": path, "width": width, "issue": "policy_content_not_visible_midpage", **policy_state})
 
-                    if width in (360, 375, 390, 430, 768, 900, 1024):
+                    # WaiverTrack is intentionally a standalone staff sign-in landing page with no public site menu.
+                    if path != "/waivertrack/" and width in (320, 360, 375, 390, 430, 768, 900, 1024):
                         toggle = page.locator(".nav-toggle")
                         if not toggle.is_visible():
                             results["accessibility"].append({"path": path, "width": width, "issue": "mobile_menu_toggle_hidden"})
@@ -126,7 +150,7 @@ def main():
                             toggle.click()
                             if toggle.get_attribute("aria-expanded") != "false":
                                 results["accessibility"].append({"path": path, "width": width, "issue": "mobile_menu_did_not_close"})
-                    if width >= 1366:
+                    if path != "/waivertrack/" and width >= 1366:
                         if not page.locator('.site-nav a[href="/careers/"]').is_visible():
                             results["accessibility"].append({"path": path, "width": width, "issue": "careers_missing_from_desktop_nav"})
                         if not page.locator('.site-nav a[href="/partners/"]').is_visible():
@@ -279,7 +303,7 @@ def main():
             home_partner_link = page.locator('.partner-callout a[href="/partners/"]').count() == 1
             page.goto(base + "/partners/", wait_until="networkidle")
             partner_text = page.locator("main").inner_text()
-            partner_content_ok = all(s in partner_text for s in ["Supporting Successful Tenancies. Strengthening Landlord Relationships.", "Communication Support", "Eviction Risk Reduction", "Lease Education", "Housing Stability", "Community Coordination", "WHEN A TENANCY IS AT RISK", "Communication coaching", "Help organizing housing notices and paperwork", "Budgeting and housing-retention planning", "qualified legal assistance", "Anchor does not directly pay ongoing rent or rental arrears.", "does not guarantee rental payments or co-sign leases", "does not provide legal advice or legal representation", "not a landlord, property manager, or enforcement agency", "cannot guarantee tenant compliance or specific housing outcomes", "cannot guarantee financial assistance or housing placement", "Client-specific communication requires appropriate client authorization", "No landlord is required to waive lawful rental standards", "Additional Partnership Resources Coming Soon", "opportunities for collaboration", "Do not send confidential client information through a website form or ordinary email"])
+            partner_content_ok = all(s in partner_text for s in ["Supporting Successful Tenancies and Strengthening Landlord Relationships", "Communication Support", "Eviction Risk Reduction", "Lease Education", "Housing Stability", "Community Coordination", "WHEN A TENANCY IS AT RISK", "Communication coaching", "Help organizing housing notices and paperwork", "Budgeting and housing-retention planning", "qualified legal assistance", "Anchor does not directly pay ongoing rent or rental arrears.", "does not guarantee rental payments or co-sign leases", "does not provide legal advice or legal representation", "not a landlord, property manager, or enforcement agency", "cannot guarantee tenant compliance or specific housing outcomes", "cannot guarantee financial assistance or housing placement", "Client-specific communication requires appropriate client authorization", "No landlord is required to waive lawful rental standards", "Additional Partnership Resources Coming Soon", "opportunities for collaboration", "Do not send confidential client information through a website form or ordinary email"])
             partner_contact_ok = page.locator('#partner-contact a[href="tel:4062197035"]').count() == 1 and page.locator('#partner-contact a[href="mailto:info@anchorsupportservice.com"]').count() == 1 and page.locator('#partner-contact form').count() == 0 and page.locator('meta[name="robots"]').get_attribute("content") == "index, follow"
             results["journeys"]["partners_page"] = {"homepage_callout": home_partner_link, "content_scope_and_limitations": partner_content_ok, "verified_contact_links_no_form": partner_contact_ok}
 
