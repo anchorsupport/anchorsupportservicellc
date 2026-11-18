@@ -2,7 +2,7 @@
 
 **Branch:** `phase2/partners`  
 **Target:** `main`  
-**State:** Review-only Jotform embeds staged; do not merge or deploy before administrator verification and owner approval.
+**State:** Review-only Jotform embeds staged; no PR was created because the connected GitHub integration rejected PR creation with HTTP 403 (`Resource not accessible by integration`). Do not merge or deploy before administrator verification and owner approval.
 
 ## Integrated history
 
