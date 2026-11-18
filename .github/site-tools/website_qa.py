@@ -67,7 +67,14 @@ def main():
                       images.forEach(image => { image.loading = 'eager'; });
                       await Promise.all(images.map(image => image.decode().catch(() => {})));
                     }""")
-                    state = page.evaluate("""() => ({inner:innerWidth, doc:document.documentElement.scrollWidth, body:document.body.scrollWidth, title:document.title, h1:[...document.querySelectorAll('h1')].map(x=>x.innerText), broken:[...document.images].filter(x=>!x.complete || !x.naturalWidth).map(x=>x.currentSrc), duplicateIds:[...document.querySelectorAll('[id]')].map(x=>x.id).filter((x,i,a)=>a.indexOf(x)!==i), unnamed:[...document.querySelectorAll('a,button')].filter(x=>!(x.innerText||x.getAttribute('aria-label')||x.getAttribute('title'))).map(x=>x.outerHTML.slice(0,120))})""")
+                    state = page.evaluate("""() => {
+                      const overflowing = [...document.querySelectorAll('body *')].map(x => {
+                        const r = x.getBoundingClientRect();
+                        const s = getComputedStyle(x);
+                        return {tag:x.tagName, id:x.id, className:typeof x.className === 'string' ? x.className : '', text:(x.innerText||'').trim().slice(0,100), left:Math.round(r.left), right:Math.round(r.right), width:Math.round(r.width), display:s.display, position:s.position};
+                      }).filter(x => x.display !== 'none' && x.position !== 'fixed' && x.position !== 'absolute' && x.right > innerWidth + 1).slice(0,20);
+                      return {inner:innerWidth, doc:document.documentElement.scrollWidth, body:document.body.scrollWidth, title:document.title, h1:[...document.querySelectorAll('h1')].map(x=>x.innerText), broken:[...document.images].filter(x=>!x.complete || !x.naturalWidth).map(x=>x.currentSrc), duplicateIds:[...document.querySelectorAll('[id]')].map(x=>x.id).filter((x,i,a)=>a.indexOf(x)!==i), unnamed:[...document.querySelectorAll('a,button')].filter(x=>!(x.innerText||x.getAttribute('aria-label')||x.getAttribute('title'))).map(x=>x.outerHTML.slice(0,120)), overflowing};
+                    }""")
                     results["pages"].append({"path": path, "width": width, "status": response.status, "title": state["title"]})
                     if state["doc"] > state["inner"] + 1 or state["body"] > state["inner"] + 1:
                         results["overflow"].append({"path": path, "width": width, **state})

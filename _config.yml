@@ -1,0 +1,16 @@
+# The GitHub Actions allowlist in .github/site-tools/build_site.py remains the
+# production source. This exclusion list also prevents accidental publication
+# of review and build artifacts if GitHub Pages falls back to branch/Jekyll mode.
+exclude:
+  - review-artifacts/
+  - dist/
+  - node_modules/
+  - tmp/
+  - docs/
+  - tests/
+  - .github/
+  - README.md
+  - package.json
+  - package-lock.json
+  - requirements.txt
+  - requirements-dev.txt
