@@ -27,6 +27,7 @@ EXTERNAL_EXPECTED = {
     "https://www.hud.gov/",
     "https://mountainline.com/",
     "https://www.indeed.com/viewjob?jk=b645ab34482aea27",
+    "https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform",
 }
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -226,7 +227,8 @@ def main():
                 page.goto(base + "/#contact", wait_until="networkidle")
                 contact_text = page.locator("#contact").inner_text()
                 office_text = page.locator(".office-update-card").inner_text()
-                contact_ok = all(s in contact_text for s in ["(406) 219-7035", "(406) 540-7982", "info@anchorsupportservice.com", "accepting new-client inquiries", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available", "PO Box 17021", "3150 Great Northern Loop"]) and all(s.casefold() in office_text.casefold() for s in ["Office Location Update", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available"]) and page.locator('#contact a[href^="https://www.google.com/maps/search/"]').count() == 1 and page.locator('.office-update-card a[href^="https://www.google.com/maps/search/"]').count() == 1
+                questionnaire = page.locator('#contact a[href="https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform"]')
+                contact_ok = all(s in contact_text for s in ["(406) 219-7035", "(406) 540-7982", "info@anchorsupportservice.com", "accepting new-client inquiries", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available", "PO Box 17021", "3150 Great Northern Loop", "General Interest Questionnaire", "not a secure Medicaid enrollment form", "Do not submit sensitive medical, Medicaid, or identifying information"]) and all(s.casefold() in office_text.casefold() for s in ["Office Location Update", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available"]) and questionnaire.count() == 1 and questionnaire.get_attribute("target") == "_blank" and "noopener" in (questionnaire.get_attribute("rel") or "") and page.locator('#contact a[href="tel:4062197035"]').count() >= 1 and page.locator('#contact a[href="secure-paperwork.html"]').inner_text() == "View Intake Steps" and page.locator('#contact a[href^="https://www.google.com/maps/search/"]').count() == 1 and page.locator('.office-update-card a[href^="https://www.google.com/maps/search/"]').count() == 1
                 page.goto(base + "/policy.html", wait_until="networkidle")
                 overflow_after_zoom = []
                 for zoom_width in [int(width/1.25), int(width/2)] if width <= 430 else []:
@@ -234,7 +236,7 @@ def main():
                     z = page.evaluate("({inner:innerWidth,scroll:document.documentElement.scrollWidth})")
                     if z["scroll"] > z["inner"] + 1:
                         overflow_after_zoom.append({"width": zoom_width, **z})
-                results["journeys"][label] = {"hiring_visible": hiring_visible, "careers_navigation": on_careers, "position_content": content_present, "pdf_download": download_ok, "pdf_href": href, "indeed_application": indeed_ok, "mobile_intro_compact": compact_intro, "apply_button_visible_early": apply_early, "mobile_menu_to_policy": menu_policy_ok, "policy_readable": policy_ok, "policy_contact_section": policy_contact_ok, "contact_links_and_intake_notice": contact_ok, "zoom_overflow": overflow_after_zoom}
+                results["journeys"][label] = {"hiring_visible": hiring_visible, "careers_navigation": on_careers, "position_content": content_present, "pdf_download": download_ok, "pdf_href": href, "indeed_application": indeed_ok, "mobile_intro_compact": compact_intro, "apply_button_visible_early": apply_early, "mobile_menu_to_policy": menu_policy_ok, "policy_readable": policy_ok, "policy_contact_section": policy_contact_ok, "contact_links_intake_notice_and_questionnaire": contact_ok, "zoom_overflow": overflow_after_zoom}
 
             page.set_viewport_size({"width": 390, "height": 844})
             page.goto(base + "/", wait_until="networkidle")
@@ -244,25 +246,14 @@ def main():
             secure_text = page.locator("main").inner_text()
             steps_text = page.locator(".paperwork-step").evaluate_all("els => els.map(el => el.textContent)")
             steps_text = " ".join(steps_text).strip()
-            template_checks = page.evaluate("""() => {
-              const expected = [
-                {id:'medicaid-signing-review', title:'Anchor Medicaid Eligibility Consent Form FINAL', src:'https://www.jotform.com/sign/262147427126051/invite/01kz4zvdp21ab4ea6182848483?signEmbed=1', full:'https://www.jotform.com/sign/262147427126051/invite/01kz4zvdp21ab4ea6182848483'},
-                {id:'tss-referral-signing-review', title:'TSS PA Prefilled Anchor Support 8.3.26', src:'https://www.jotform.com/sign/262147240572049/invite/01kz4zrqzrffb243dcb86ce3ee?signEmbed=1', full:'https://www.jotform.com/sign/262147240572049/invite/01kz4zrqzrffb243dcb86ce3ee'}
-              ];
-              return expected.map(item => {
-                const template=document.getElementById(item.id);
-                const frame=template?.content.querySelector('iframe');
-                const link=template?.content.querySelector('a');
-                return {id:item.id, exists:!!template, iframe:!!frame, title:frame?.title, src:frame?.getAttribute('src'), accessibleFullScreen:!!link && link.href===item.full, fullLinkText:link?.textContent.trim()||'', loading:frame?.getAttribute('loading'), widthStyle:frame?.getAttribute('style')||''};
-              });
-            }""")
-            staged_links_ok = len(template_checks) == 2 and template_checks[0]["exists"] and template_checks[0]["iframe"] and template_checks[0]["title"] == "Anchor Medicaid Eligibility Consent Form FINAL" and template_checks[0]["src"] == "https://www.jotform.com/sign/262147427126051/invite/01kz4zvdp21ab4ea6182848483?signEmbed=1" and template_checks[0]["accessibleFullScreen"] and template_checks[1]["exists"] and template_checks[1]["iframe"] and template_checks[1]["title"] == "TSS PA Prefilled Anchor Support 8.3.26" and template_checks[1]["src"] == "https://www.jotform.com/sign/262147240572049/invite/01kz4zrqzrffb243dcb86ce3ee?signEmbed=1" and template_checks[1]["accessibleFullScreen"] and all(x["loading"] == "lazy" and "width:100%" in x["widthStyle"] for x in template_checks)
-            active_signing_link = page.locator('a[href^="https://www.jotform.com/sign/"]').count() > 0
-            secure_intake_ok = secure_meta == "noindex, nofollow" and all(s in secure_text + " " + steps_text for s in ["Step 1", "Medicaid Eligibility Consent", "Step 2", "TSS Prior Authorization Paperwork", "only after Medicaid eligibility has been reviewed", "not technically access-restricted", "does not guarantee eligibility, Medicaid authorization, housing assistance"]) and page.locator(".paperwork-step").count() == 2 and page.locator("iframe").count() == 0 and page.locator("form").count() == 0 and page.locator('a[href="tel:4062197035"]').count() >= 1 and staged_links_ok and not active_signing_link
+            secure_html = (root / "secure-paperwork.html").read_text(encoding="utf-8").casefold()
+            secure_online_unavailable = "online paperwork is not yet available" in secure_text.casefold()
+            no_published_jotform_link = "jotform.com" not in secure_html and "/invite/" not in secure_html
+            secure_intake_ok = secure_meta == "noindex, nofollow" and all(s in secure_text + " " + steps_text for s in ["Step 1", "Medicaid Eligibility Consent", "Step 2", "TSS Prior Authorization Paperwork", "only after Medicaid eligibility has been reviewed", "does not guarantee eligibility, Medicaid authorization, housing assistance"]) and secure_online_unavailable and no_published_jotform_link and page.locator(".paperwork-step").count() == 2 and page.locator("iframe").count() == 0 and page.locator("form").count() == 0 and page.locator('a[href="tel:4062197035"]').count() >= 1 and page.locator('a[href^="https://www.jotform.com/"]').count() == 0
             stale_pause_copy = re.compile(r"paused from accepting new clients|new client pause|intake (?:is )?paused|paperwork (?:is )?paused", re.I)
             public_html = [root / "index.html", root / "careers" / "index.html", root / "secure-paperwork.html"]
             no_stale_intake_pause = all(not stale_pause_copy.search(file.read_text(encoding="utf-8")) for file in public_html)
-            results["journeys"]["new_client_intake"] = {"homepage_notice": intake_notice_ok, "secure_steps_and_no_unverified_embeds": secure_intake_ok, "staged_embed_snippets_and_full_screen_links": staged_links_ok, "no_active_signing_links": not active_signing_link, "secure_route_noindex_nofollow": secure_meta == "noindex, nofollow", "no_stale_pause_copy": no_stale_intake_pause}
+            results["journeys"]["new_client_intake"] = {"homepage_notice": intake_notice_ok, "secure_steps_and_online_forms_unavailable": secure_intake_ok, "no_jotform_or_invitation_links_published": no_published_jotform_link, "secure_route_noindex_nofollow": secure_meta == "noindex, nofollow", "no_stale_pause_copy": no_stale_intake_pause}
 
             page.set_viewport_size({"width": 390, "height": 844})
             page.goto(base + "/", wait_until="networkidle")
@@ -300,9 +291,9 @@ def main():
     summary = {"page_count": len(results["pages"]), "viewports": VIEWPORTS, "overflow": results["overflow"], "page_errors": results["page_errors"], "console_errors": results["console_errors"], "failed_local_requests": results["failed_local_requests"], "broken_images": results["broken_images"], "internal_links": results["internal_links"], "external_link_count": len(results["external_links"]), "journeys": results["journeys"], "accessibility": results["accessibility"]}
     print(json.dumps(summary, indent=2))
     failed = bool(results["overflow"] or results["page_errors"] or results["console_errors"] or results["failed_local_requests"] or results["broken_images"] or results["internal_links"] or results["accessibility"])
-    failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("indeed_application"),v.get("mobile_intro_compact"),v.get("apply_button_visible_early"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_and_intake_notice")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
+    failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("indeed_application"),v.get("mobile_intro_compact"),v.get("apply_button_visible_early"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_intake_notice_and_questionnaire")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
     intake = results["journeys"].get("new_client_intake", {})
-    failed = failed or not all(intake.get(key) for key in ("homepage_notice", "secure_steps_and_no_unverified_embeds", "secure_route_noindex_nofollow", "no_stale_pause_copy"))
+    failed = failed or not all(intake.get(key) for key in ("homepage_notice", "secure_steps_and_online_forms_unavailable", "no_jotform_or_invitation_links_published", "secure_route_noindex_nofollow", "no_stale_pause_copy"))
     partners = results["journeys"].get("partners_page", {})
     failed = failed or not all(partners.get(key) for key in ("homepage_callout", "content_scope_and_limitations", "verified_contact_links_no_form"))
 
