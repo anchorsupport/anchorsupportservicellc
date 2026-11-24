@@ -11,7 +11,7 @@ import re
 from playwright.sync_api import sync_playwright
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[2]
-PAGES = ["/", "/careers/", "/partners/", "/policy.html", "/secure-paperwork.html", "/waivertrack/", "/404.html"]
+PAGES = ["/", "/careers/", "/partners/", "/housing-insights/", "/policy.html", "/secure-paperwork.html", "/waivertrack/", "/404.html"]
 VIEWPORTS = [320, 360, 375, 390, 430, 768, 900, 1024, 1366, 1440, 1920]
 EXTERNAL_EXPECTED = {
     "https://www.dphhs.mt.gov/medicaidchanges/",
@@ -25,6 +25,15 @@ EXTERNAL_EXPECTED = {
     "https://www.hud.gov/",
     "https://mountainline.com/",
     "https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform",
+    "https://www.ci.missoula.mt.us/3472/Housing-Assessment-Report",
+    "https://www.missoulaparks.org/3112/Houseless-Data",
+    "https://ravallicounty.gov/ArchiveCenter/ViewFile/Item/20329",
+    "https://commerce.mt.gov/News/press-releases-and-statements/Montana-Board-of-Housing-Allocates-Funding-to-Build-136-Affordable-Homes-in-Montana",
+    "https://montanafreepress.org/2026/11/13/new-transitional-housing-for-families-in-the-works/",
+    "https://montanafreepress.org/2026/09/15/johnson-street-shelter-closure-response/",
+    "https://montanafreepress.org/2026/07/17/survey-ids-top-barriers-for-missoula-renters/",
+    "https://dphhs.mt.gov/HeartInitiative/TenancySupportServices",
+    "https://dphhs.mt.gov/assets/BHDD/HeartWaiver/605_TSS-TSS_eff.1.1.25.pdf",
 }
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -144,6 +153,8 @@ def main():
                                 results["accessibility"].append({"path": path, "width": width, "issue": "partners_missing_from_mobile_menu"})
                             if not page.locator('.site-nav a[href="/policy.html"]').is_visible():
                                 results["accessibility"].append({"path": path, "width": width, "issue": "privacy_missing_from_mobile_menu"})
+                            if not page.locator('.site-nav a[href="/housing-insights/"]').is_visible():
+                                results["accessibility"].append({"path": path, "width": width, "issue": "housing_insights_missing_from_mobile_menu"})
                             toggle.click()
                             if toggle.get_attribute("aria-expanded") != "false":
                                 results["accessibility"].append({"path": path, "width": width, "issue": "mobile_menu_did_not_close"})
@@ -152,6 +163,8 @@ def main():
                             results["accessibility"].append({"path": path, "width": width, "issue": "careers_missing_from_desktop_nav"})
                         if not page.locator('.site-nav a[href="/partners/"]').is_visible():
                             results["accessibility"].append({"path": path, "width": width, "issue": "partners_missing_from_desktop_nav"})
+                        if not page.locator('.site-nav a[href="/housing-insights/"]').is_visible():
+                            results["accessibility"].append({"path": path, "width": width, "issue": "housing_insights_missing_from_desktop_nav"})
                         if page.locator(".nav-toggle").is_visible():
                             results["accessibility"].append({"path": path, "width": width, "issue": "desktop_menu_toggle_visible"})
 
@@ -304,6 +317,47 @@ def main():
                 "sensitive_information_warning": "Do not include sensitive medical, Medicaid, or identifying information" in page.locator(".hero-questionnaire-note").inner_text(),
                 "contact_section_link_retained": page.locator('#contact a[href="https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform"]').count() == 1,
             }
+            insights_preview = page.locator('.housing-insights-preview a[href="/housing-insights/"]')
+            results["journeys"]["homepage_housing_insights_preview"] = {
+                "visible": insights_preview.count() == 1 and insights_preview.is_visible(),
+                "labelled": insights_preview.count() == 1 and insights_preview.inner_text().strip() == "Explore Housing Insights",
+                "heading_and_description": "Understanding Montana's Housing Challenges" in page.locator(".housing-insights-preview").inner_text() and "Explore housing statistics" in page.locator(".housing-insights-preview").inner_text(),
+            }
+            page.goto(base + "/housing-insights/", wait_until="networkidle")
+            insight_text = page.locator("main").inner_text()
+            stat_cards = page.locator(".insight-stat-card")
+            article_cards = page.locator(".insight-article-card")
+            progress_cards = page.locator(".insight-progress-card")
+            source_links = page.locator(".insight-card a[target='_blank']")
+            insight_html = (root / "housing-insights" / "index.html").read_text(encoding="utf-8").casefold()
+            insight_data_path = root / "housing-insights" / "housing-insights-data.json"
+            if not insight_data_path.is_file():
+                insight_data_path = root.parent.parent / "housing-insights" / "housing-insights-data.json"
+            insight_data = json.loads(insight_data_path.read_text(encoding="utf-8")) if insight_data_path.is_file() else None
+            insight_sources_verified = insight_data is not None and all(item["sourceUrl"].casefold() in insight_html for group in ("statistics", "progress", "articles") for item in insight_data[group])
+            insight_ok = (
+                page.locator("h1").count() == 1
+                and page.locator("h1").inner_text() == "Housing Insights & Community Impact"
+                and stat_cards.count() >= 3 and article_cards.count() >= 2 and progress_cards.count() >= 1
+                and source_links.count() >= stat_cards.count() + article_cards.count() + progress_cards.count()
+                and insight_sources_verified
+                and "49.6%" in insight_text and "180" in insight_text and "169" in insight_text
+                and "not a completed or evaluated outcome" in insight_text
+                and "Anchor Support Service LLC is committed to supporting individuals" in insight_text
+                and "does not directly provide ongoing rental subsidies or shelter" in insight_text
+                and page.locator('meta[name="description"]').count() == 1
+                and page.locator('link[rel="canonical"]').get_attribute("href") == "https://anchorsupportservice.com/housing-insights/"
+                and page.locator(".insights-updated time").get_attribute("datetime") == "2026-11-24"
+            )
+            results["journeys"]["housing_insights"] = {
+                "page_structure_and_content": insight_ok,
+                "statistics_articles_and_progress_cards": {"statistics": stat_cards.count(), "articles": article_cards.count(), "progress": progress_cards.count()},
+                "every_data_source_linked": insight_sources_verified,
+                "source_links_open_safely": source_links.count() > 0 and source_links.evaluate_all("els => els.every(a => a.rel.includes('noopener') && a.rel.includes('noreferrer'))"),
+                "expected_stat_values_and_scope_notes": all(x in insight_text for x in ["49.6%", "180", "169", "one-night snapshots"]),
+                "no_anchor_outcomes_claimed": "verified information about our community impact" in insight_text and "not Anchor outcomes" in insight_text,
+            }
+            page.goto(base + "/", wait_until="networkidle")
             home_partner_link = page.locator('.partner-callout a[href="/partners/"]').count() == 1
             page.goto(base + "/partners/", wait_until="networkidle")
             partner_text = page.locator("main").inner_text()
@@ -349,6 +403,9 @@ def main():
     failed = failed or any(not all([v.get("homepage_no_openings_callout"),v.get("careers_navigation"),v.get("closed_careers_copy"),v.get("no_application_ctas"),v.get("no_job_posting_data"),v.get("closed_status_metadata"),v.get("retired_job_description_not_published"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_intake_notice_questionnaire_and_holiday_closures"),v.get("holiday_closures_near_business_hours")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
     failed = failed or not results["journeys"].get("no_public_active_recruitment", {}).get("verified", False)
     failed = failed or not all(results["journeys"].get("homepage_questionnaire", {}).values())
+    failed = failed or not all(results["journeys"].get("homepage_housing_insights_preview", {}).values())
+    housing_insights = results["journeys"].get("housing_insights", {})
+    failed = failed or not all(value is True for key, value in housing_insights.items() if isinstance(value, bool))
     failed = failed or not results["journeys"].get("founder_photo_mobile", {}).get("loaded", False)
     intake = results["journeys"].get("new_client_intake", {})
     failed = failed or not all(intake.get(key) for key in ("homepage_notice", "secure_steps_and_online_forms_unavailable", "no_jotform_or_invitation_links_published", "secure_route_noindex_nofollow", "no_stale_pause_copy"))

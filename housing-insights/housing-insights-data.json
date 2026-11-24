@@ -1,0 +1,91 @@
+{
+  "lastUpdated": "2026-11-24",
+  "statistics": [
+    {
+      "value": "49.6%",
+      "title": "Missoula renter cost burden",
+      "description": "Renter households paying 30% or more of household income toward housing costs in 2024.",
+      "geographicScope": "Missoula",
+      "reportingPeriod": "2024",
+      "sourceOrganization": "City of Missoula",
+      "sourceUrl": "https://www.ci.missoula.mt.us/3472/Housing-Assessment-Report",
+      "lastVerified": "2026-11-24"
+    },
+    {
+      "value": "180",
+      "title": "People counted unsheltered",
+      "description": "People counted as unsheltered in Missoula during the 2026 Point-in-Time count. A one-night count is a snapshot, not a full annual measure.",
+      "geographicScope": "Missoula",
+      "reportingPeriod": "January 2026",
+      "sourceOrganization": "Montana Continuum of Care Coalition",
+      "sourceUrl": "https://ravallicounty.gov/ArchiveCenter/ViewFile/Item/20329",
+      "lastVerified": "2026-11-24"
+    },
+    {
+      "value": "169",
+      "title": "Individuals and families secured housing",
+      "description": "People and families reported as securing housing through local community efforts; the City notes some moved to permanent rentals and some with family or friends.",
+      "geographicScope": "Missoula",
+      "reportingPeriod": "May-November 2025",
+      "sourceOrganization": "City of Missoula",
+      "sourceUrl": "https://www.missoulaparks.org/3112/Houseless-Data",
+      "lastVerified": "2026-11-24"
+    }
+  ],
+  "progress": [
+    {
+      "title": "Affordable homes planned across five Montana communities",
+      "value": "136 planned homes",
+      "description": "The Montana Board of Housing allocated federal housing tax credits for 136 affordable homes across five communities. The award includes 30 planned homes at Franklin Crossing in Missoula; these are planned homes, not completed units.",
+      "geographicScope": "Montana, including Missoula",
+      "reportingPeriod": "October 21, 2026",
+      "sourceOrganization": "Montana Department of Commerce",
+      "sourceUrl": "https://commerce.mt.gov/News/press-releases-and-statements/Montana-Board-of-Housing-Allocates-Funding-to-Build-136-Affordable-Homes-in-Montana",
+      "lastVerified": "2026-11-24"
+    },
+    {
+      "title": "A family-focused transition housing program in development",
+      "value": "Missoula community initiative",
+      "description": "Missoula Interfaith Collaborative acquired a property for a planned transitional housing program for families leaving shelter, with behavioral health and addiction-service partnerships. The article described a hoped-for 2027 opening; it is a developing project, not a completed or evaluated outcome.",
+      "geographicScope": "Missoula",
+      "reportingPeriod": "November 13, 2026",
+      "sourceOrganization": "Montana Free Press",
+      "sourceUrl": "https://montanafreepress.org/2026/11/13/new-transitional-housing-for-families-in-the-works/",
+      "lastVerified": "2026-11-24"
+    }
+  ],
+  "articles": [
+    {
+      "title": "New transitional housing for families in the works",
+      "publication": "Montana Free Press",
+      "publicationDate": "2026-11-13",
+      "summary": "Missoula Interfaith Collaborative purchased a property for a planned transitional housing program for families leaving shelter. The story describes a partnership-based approach intended to combine stable housing with connections to behavioral health, addiction services and other supports.",
+      "sourceUrl": "https://montanafreepress.org/2026/11/13/new-transitional-housing-for-families-in-the-works/",
+      "lastVerified": "2026-11-24"
+    },
+    {
+      "title": "Montana Board of Housing allocates funding to build 136 affordable homes",
+      "publication": "Montana Department of Commerce",
+      "publicationDate": "2026-10-21",
+      "summary": "The state announced federal housing tax-credit allocations supporting 136 affordable homes in five Montana communities. The release identifies 30 planned homes at Franklin Crossing in Missoula; these awards support future development and do not mean the homes are already complete.",
+      "sourceUrl": "https://commerce.mt.gov/News/press-releases-and-statements/Montana-Board-of-Housing-Allocates-Funding-to-Build-136-Affordable-Homes-in-Montana",
+      "lastVerified": "2026-11-24"
+    },
+    {
+      "title": "What Missoula's homelessness response looks like one year after Johnson Street shelter closure",
+      "publication": "Montana Free Press",
+      "publicationDate": "2026-09-15",
+      "summary": "The report looks at how Missoula's response changed after the Johnson Street shelter closed, including pressure on remaining shelter capacity and outreach. It notes that the January Point-in-Time count is a one-night snapshot and may undercount people experiencing homelessness.",
+      "sourceUrl": "https://montanafreepress.org/2026/09/15/johnson-street-shelter-closure-response/",
+      "lastVerified": "2026-11-24"
+    },
+    {
+      "title": "Survey IDs top barriers for Missoula renters",
+      "publication": "Montana Free Press",
+      "publicationDate": "2026-07-17",
+      "summary": "A Missoula renter survey identified unaffordable rents, income requirements and a shortage of pet-friendly rentals among common housing barriers. The story also reports that more than half of surveyed renters had difficulty finding their current home and 77% searched for at least a month.",
+      "sourceUrl": "https://montanafreepress.org/2026/07/17/survey-ids-top-barriers-for-missoula-renters/",
+      "lastVerified": "2026-11-24"
+    }
+  ]
+}
