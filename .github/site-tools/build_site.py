@@ -32,7 +32,6 @@ PUBLIC_FILES = (
     "alex-ceo-picture-display.webp",
     "scotty-housing-navigator.jpg",
     "scotty-housing-navigator pic.jpg",
-    "assets/anchor-support-housing-navigator-tenancy-support-specialist-job-description.pdf",
 )
 
 

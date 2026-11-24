@@ -27,19 +27,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install site QA and PDF tools
+      - name: Install site QA tools
         run: python -m pip install -r .github/site-tools/requirements-ci.txt
 
       - name: Install Chromium for responsive QA
         run: python -m playwright install --with-deps chromium
 
-      - name: Generate public job description
-        run: python .github/site-tools/build_public_job_description.py
-
       - name: Build allowlisted Pages directory
         run: python .github/site-tools/build_site.py
 
-      - name: Run responsive, links, Careers, PDF, and privacy QA
+      - name: Run responsive, links, Careers status, and privacy QA
         run: python .github/site-tools/website_qa.py --root dist/public-site
 
       - name: Save verified site artifact

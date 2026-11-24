@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections import Counter
 import argparse
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -8,7 +7,6 @@ from threading import Thread
 from urllib.parse import urldefrag, urljoin, urlparse
 import json
 import re
-import tempfile
 
 from playwright.sync_api import sync_playwright
 
@@ -26,7 +24,6 @@ EXTERNAL_EXPECTED = {
     "https://montanafairhousing.org/",
     "https://www.hud.gov/",
     "https://mountainline.com/",
-    "https://www.indeed.com/viewjob?jk=b645ab34482aea27",
     "https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform",
 }
 
@@ -207,7 +204,7 @@ def main():
             results["external_links"] = [{"url": url, "present": True} for url in sorted(external_found)]
 
             # Check standalone assets and the protected portal landing route without following sign-in.
-            required_assets = ["/styles.css", "/script.js", "/anchor-logo.png", "/anchor-logo-display.webp", "/anchor-favicon.png", "/alex-ceo-picture.png", "/alex-ceo-picture-display.webp", "/assets/anchor-support-housing-navigator-tenancy-support-specialist-job-description.pdf"]
+            required_assets = ["/styles.css", "/script.js", "/anchor-logo.png", "/anchor-logo-display.webp", "/anchor-favicon.png", "/alex-ceo-picture.png", "/alex-ceo-picture-display.webp"]
             for asset in required_assets:
                 response = page.request.get(base + asset)
                 if response.status != 200:
@@ -219,31 +216,25 @@ def main():
             if missing_route.status != 404:
                 results["internal_links"].append({"issue": "missing_route_did_not_return_404", "status": missing_route.status})
 
-            # Required applicant journey at mobile and desktop sizes.
+            # Careers must be an informational page with no active applications at both breakpoints.
             for width, label in [(390, "mobile"), (1366, "desktop")]:
                 page.set_viewport_size({"width": width, "height": 900 if width >= 768 else 844})
                 page.goto(base + "/", wait_until="networkidle")
-                hiring_visible = page.get_by_text("Now hiring", exact=False).first.is_visible()
-                page.get_by_role("link", name="View Career Opportunity").click()
-                on_careers = urlparse(page.url).path == "/careers/" and page.get_by_role("heading", name="Housing Navigator / Tenancy Support Specialist").count() == 1
-                text = page.locator("body").inner_text()
-                content_present = all(s in text for s in ["Minimum qualifications", "Preferred qualifications", "What the work can look like", "$17.00-$18.00", "$18.00-$20.00", "twelve (12) months", "no guaranteed minimum paid hours"])
-                apply_button = page.locator('a.button[aria-label^="Apply on Indeed"]').first
-                apply_top = apply_button.evaluate("element => element.getBoundingClientRect().top")
-                pay_top = page.locator(".careers-hero-pay").evaluate("element => element.getBoundingClientRect().top")
-                compact_intro = page.locator(".careers-hero-intro-compact").is_visible() if width <= 600 else True
-                apply_early = apply_top < pay_top and (width > 600 or apply_top < page.evaluate("innerHeight"))
-                download_link = page.get_by_role("link", name="Download Job Description (PDF)").first
-                href = download_link.get_attribute("href")
-                with page.expect_download() as download_info:
-                    download_link.click()
-                download = download_info.value
-                with tempfile.TemporaryDirectory() as d:
-                    target = Path(d) / download.suggested_filename
-                    download.save_as(target)
-                    download_ok = target.read_bytes().startswith(b"%PDF-") and target.stat().st_size > 1000
-                indeed_links = page.locator('a.button[aria-label^="Apply on Indeed"]').evaluate_all("els => els.map(x => ({href:x.href, target:x.target, rel:x.rel}))")
-                indeed_ok = len(indeed_links) == 2 and all(link["href"] == "https://www.indeed.com/viewjob?jk=b645ab34482aea27" and link["target"] == "_blank" and {"noopener", "noreferrer"}.issubset(set(link["rel"].split())) for link in indeed_links) and page.locator('a[href^="mailto:alex@"]').count() == 0 and "All employment applications are processed through Indeed. Please submit your resume and application using the link above. Employment applications are not accepted through our general contact form or business email." in text and page.get_by_role("heading", name="Careers at Anchor Support Service").count() == 1 and "Community-Based and Approved Remote Work" in text and "Help individuals experiencing homelessness or housing instability obtain and maintain housing through housing assessments, individualized planning, housing searches, rental applications, landlord communication, community resource coordination, and ongoing tenancy support." in text
+                home_text = page.locator("body").inner_text()
+                home_careers = page.locator(".home-careers-callout")
+                home_careers_ok = home_careers.get_by_role("heading", name="No Current Openings").count() == 1 and home_careers.get_by_role("link", name="Careers at Anchor").get_attribute("href") == "/careers/" and "We are not accepting new employment applications at this time." in home_careers.inner_text() and not re.search(r"now hiring", home_text, re.I)
+                home_careers.get_by_role("link", name="Careers at Anchor").click()
+                on_careers = urlparse(page.url).path == "/careers/" and page.get_by_role("heading", name="Careers at Anchor Support Service LLC").count() == 1
+                careers_text = page.locator("body").inner_text()
+                expected_thanks = "Thank you to everyone who took the time to apply and express interest in joining Anchor Support Service LLC. We sincerely appreciate your interest in our mission and the time you invested in the application process."
+                expected_closed = "We are not accepting new employment applications at this time. Please check this page for future opportunities."
+                careers_copy_ok = page.locator(".careers-status").inner_text().casefold() == "we are not currently hiring" and expected_thanks in careers_text and expected_closed in careers_text and not re.search(r"now hiring", careers_text, re.I)
+                careers_links = page.locator("a[href]").evaluate_all("els => els.map(a => ({href:a.href, text:(a.innerText||'').trim(), aria:a.getAttribute('aria-label')||''}))")
+                no_application_ctas = not any("indeed.com" in item["href"].casefold() or "job-description.pdf" in item["href"].casefold() or re.search(r"apply on indeed|submit application|apply through indeed", item["text"]+" "+item["aria"], re.I) for item in careers_links)
+                career_html = (root / "careers" / "index.html").read_text(encoding="utf-8-sig")
+                no_job_posting_data = not re.search(r'"@type"\s*:\s*"JobPosting"', career_html, re.I)
+                careers_meta = page.locator('meta[name="description"]').get_attribute("content") or ""
+                status_meta_ok = "not currently hiring" in careers_meta.casefold() and "not accepting new employment applications" in careers_meta.casefold()
                 menu_policy_ok = True
                 if width <= 768:
                     page.locator(".nav-toggle").click()
@@ -261,7 +252,11 @@ def main():
                 contact_text = page.locator("#contact").inner_text()
                 office_text = page.locator(".office-update-card").inner_text()
                 questionnaire = page.locator('#contact a[href="https://docs.google.com/forms/d/e/1FAIpQLSeae9eGYlUxB4MeFz2V6wtrWI_awH7uM_E0AykRIPcDMjRBGQ/viewform"]')
-                contact_ok = all(s in contact_text for s in ["(406) 219-7035", "(406) 540-7982", "info@anchorsupportservice.com", "accepting new-client inquiries", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available", "PO Box 17021", "3150 Great Northern Loop", "General Interest Questionnaire", "not a secure Medicaid enrollment form", "Do not submit sensitive medical, Medicaid, or identifying information"]) and all(s.casefold() in office_text.casefold() for s in ["Office Location Update", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available"]) and questionnaire.count() == 1 and questionnaire.get_attribute("target") == "_blank" and "noopener" in (questionnaire.get_attribute("rel") or "") and page.locator('#contact a[href="tel:4062197035"]').count() >= 1 and page.locator('#contact a[href="secure-paperwork.html"]').inner_text() == "View Intake Steps" and page.locator('#contact a[href^="https://www.google.com/maps/search/"]').count() == 1 and page.locator('.office-update-card a[href^="https://www.google.com/maps/search/"]').count() == 1
+                holiday_card = page.locator("#holiday-office-closures")
+                holiday_text = holiday_card.inner_text()
+                expected_holidays = ["Thanksgiving Day: Thursday, November 26, 2026", "Christmas Day: Friday, December 25, 2026", "New Year\u2019s Day: Friday, January 1, 2027"]
+                holiday_ok = holiday_card.get_by_role("heading", name="Upcoming Holiday Office Closures").count() == 1 and all(day in holiday_text for day in expected_holidays) and "Monday through Friday, 8:00 AM\u20135:00 PM, by appointment only." in holiday_text and "Messages received during these closures will be reviewed when regular business operations resume." in holiday_text and all(holiday_card.locator(f'time[datetime="{day}"]').count() == 1 for day in ["2026-11-26", "2026-12-25", "2027-01-01"]) and not any(forbidden in holiday_text for forbidden in ["November 27", "December 24", "December 31", "24/7", "emergency support"])
+                contact_ok = all(s in contact_text for s in ["(406) 219-7035", "(406) 540-7982", "info@anchorsupportservice.com", "accepting new-client inquiries", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available", "PO Box 17021", "3150 Great Northern Loop", "General Interest Questionnaire", "not a secure Medicaid enrollment form", "Do not submit sensitive medical, Medicaid, or identifying information", "Upcoming Holiday Office Closures"]) and all(s.casefold() in office_text.casefold() for s in ["Office Location Update", "3010 Santa Fe Ct, Suite 228", "By Appointment Only", "Walk-ins are not available"]) and questionnaire.count() == 1 and questionnaire.get_attribute("target") == "_blank" and "noopener" in (questionnaire.get_attribute("rel") or "") and page.locator('#contact a[href="tel:4062197035"]').count() >= 1 and page.locator('#contact a[href="secure-paperwork.html"]').inner_text() == "View Intake Steps" and page.locator('#contact a[href^="https://www.google.com/maps/search/"]').count() == 1 and page.locator('.office-update-card a[href^="https://www.google.com/maps/search/"]').count() == 1 and holiday_ok
                 page.goto(base + "/policy.html", wait_until="networkidle")
                 overflow_after_zoom = []
                 for zoom_width in [int(width/1.25), int(width/2)] if width <= 430 else []:
@@ -269,7 +264,8 @@ def main():
                     z = page.evaluate("({inner:innerWidth,scroll:document.documentElement.scrollWidth})")
                     if z["scroll"] > z["inner"] + 1:
                         overflow_after_zoom.append({"width": zoom_width, **z})
-                results["journeys"][label] = {"hiring_visible": hiring_visible, "careers_navigation": on_careers, "position_content": content_present, "pdf_download": download_ok, "pdf_href": href, "indeed_application": indeed_ok, "mobile_intro_compact": compact_intro, "apply_button_visible_early": apply_early, "mobile_menu_to_policy": menu_policy_ok, "policy_readable": policy_ok, "policy_contact_section": policy_contact_ok, "contact_links_intake_notice_and_questionnaire": contact_ok, "zoom_overflow": overflow_after_zoom}
+                retired_pdf = page.request.get(base + "/assets/anchor-support-housing-navigator-tenancy-support-specialist-job-description.pdf")
+                results["journeys"][label] = {"homepage_no_openings_callout": home_careers_ok, "careers_navigation": on_careers, "closed_careers_copy": careers_copy_ok, "no_application_ctas": no_application_ctas, "no_job_posting_data": no_job_posting_data, "closed_status_metadata": status_meta_ok, "retired_job_description_not_published": retired_pdf.status == 404, "mobile_menu_to_policy": menu_policy_ok, "policy_readable": policy_ok, "policy_contact_section": policy_contact_ok, "contact_links_intake_notice_questionnaire_and_holiday_closures": contact_ok, "holiday_closures_near_business_hours": holiday_ok, "zoom_overflow": overflow_after_zoom}
 
             page.set_viewport_size({"width": 390, "height": 844})
             page.goto(base + "/", wait_until="networkidle")
@@ -343,10 +339,15 @@ def main():
     finally:
         server.shutdown()
         server.server_close()
+    active_recruitment_pattern = re.compile(r'Now hiring|Apply on Indeed|indeed\.com/viewjob|View Career Opportunity|anchor-support-housing-navigator-tenancy-support-specialist-job-description\.pdf|"@type"\s*:\s*"JobPosting"', re.I)
+    published_html = list(root.rglob("*.html"))
+    no_active_recruitment = all(not active_recruitment_pattern.search(path.read_text(encoding="utf-8-sig")) for path in published_html)
+    results["journeys"]["no_public_active_recruitment"] = {"verified": no_active_recruitment, "html_files_scanned": len(published_html)}
     summary = {"page_count": len(results["pages"]), "viewports": VIEWPORTS, "overflow": results["overflow"], "page_errors": results["page_errors"], "console_errors": results["console_errors"], "failed_local_requests": results["failed_local_requests"], "broken_images": results["broken_images"], "internal_links": results["internal_links"], "external_link_count": len(results["external_links"]), "journeys": results["journeys"], "accessibility": results["accessibility"]}
     print(json.dumps(summary, indent=2))
     failed = bool(results["overflow"] or results["page_errors"] or results["console_errors"] or results["failed_local_requests"] or results["broken_images"] or results["internal_links"] or results["accessibility"])
-    failed = failed or any(not all([v.get("hiring_visible"),v.get("careers_navigation"),v.get("position_content"),v.get("pdf_download"),v.get("indeed_application"),v.get("mobile_intro_compact"),v.get("apply_button_visible_early"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_intake_notice_and_questionnaire")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
+    failed = failed or any(not all([v.get("homepage_no_openings_callout"),v.get("careers_navigation"),v.get("closed_careers_copy"),v.get("no_application_ctas"),v.get("no_job_posting_data"),v.get("closed_status_metadata"),v.get("retired_job_description_not_published"),v.get("mobile_menu_to_policy"),v.get("policy_readable"),v.get("policy_contact_section"),v.get("contact_links_intake_notice_questionnaire_and_holiday_closures"),v.get("holiday_closures_near_business_hours")]) or v.get("zoom_overflow") for k,v in results["journeys"].items() if k in ("mobile","desktop"))
+    failed = failed or not results["journeys"].get("no_public_active_recruitment", {}).get("verified", False)
     failed = failed or not all(results["journeys"].get("homepage_questionnaire", {}).values())
     failed = failed or not results["journeys"].get("founder_photo_mobile", {}).get("loaded", False)
     intake = results["journeys"].get("new_client_intake", {})
