@@ -9,7 +9,7 @@ The `main` branch of `anchorsupport/anchorsupportservicellc` is the source of tr
 | Homepage, service/eligibility content, intake availability, contact, questionnaire, office location, navigation and footer | `index.html` |
 | Shared branding, layout, responsive behavior, mobile navigation and focus styles | `styles.css`, `script.js` |
 | Logo, favicon, founder photo and public service photos | `anchor-logo.png`, `anchor-logo-display.webp`, `anchor-favicon.png`, `alex-ceo-picture.png`, `alex-ceo-picture-display.webp`, `scotty-housing-navigator.jpg`, `scotty-housing-navigator pic.jpg` |
-| Careers and public applicant job description | `careers/index.html`; generated PDF `assets/anchor-support-housing-navigator-tenancy-support-specialist-job-description.pdf`; generator `.github/site-tools/build_public_job_description.py` |
+| Careers status announcement | `careers/index.html`; the homepage no-openings callout is in `index.html`; the previous applicant PDF is retained in the repository but excluded from the public-site allowlist while applications are closed. |
 | Landlord and community partner information | `partners/index.html` |
 | Privacy policy and its compatibility route | `policy.html`, `privacy-policy.html` |
 | Telephone inquiry and two-step paperwork instructions | `secure-paperwork.html` |
@@ -24,29 +24,28 @@ The shared primary navigation is Home, Services, Eligibility, Who We Support, Re
 
 ## Public business information
 
-The contact section in `index.html` is the source for business contact details: (406) 219-7035, fax (406) 540-7982, `info@anchorsupportservice.com`, Monday–Friday 8:00 AM–5:00 PM, and the Missoula office at 3010 Santa Fe Ct, Suite 228, by appointment only. The mailing address is PO Box 17021, 3150 Great Northern Loop, Missoula, Montana 59808-7021. Verify factual changes with the owner before publishing them. Do not change the general contact email while updating the hiring contact.
+The contact section in `index.html` is the source for business contact details: (406) 219-7035, fax (406) 540-7982, `info@anchorsupportservice.com`, Monday through Friday, 8:00 AM?5:00 PM by appointment only, and the Missoula office at 3010 Santa Fe Ct, Suite 208. The temporary holiday notice is in `#holiday-office-closures`; review and remove it after January 1, 2027. The mailing address is PO Box 17021, 3150 Great Northern Loop, Missoula, Montana 59808-7021. Verify factual changes with the owner before publishing them.
 
 ## Careers, partners and intake
 
-- Careers applications are through the Indeed listing linked in `careers/index.html`; the public PDF is generated from the approved October 14, 2026 job-description source. Do not publish an internal HR document.
+- Anchor is not currently hiring and is not accepting new employment applications. `careers/index.html` contains the approved announcement. Do not publish an active vacancy, application link, or old job-description PDF while this status remains in effect.
 - The Partners page explains landlord/property-manager coordination, housing stability, confidentiality, scope limitations, and future partnership resources.
 - New-client inquiries are open. The General Interest Questionnaire is for general inquiries only and must not solicit sensitive health or Medicaid information. Telephone intake remains available through the listed business phone.
 - The original workflow is Step 1 Medicaid Eligibility Consent, then Medicaid review, then Step 2 TSS referral/PA paperwork when Anchor directs the applicant to proceed. The current public `secure-paperwork.html` page states that online paperwork is not yet available. Do not activate historical or applicant-specific Jotform invite links until reusable blank signing sessions, applicant isolation, routing, notifications, and HIPAA/BAA coverage have been verified by the administrator and approved by the owner.
 
 ## Build, test and publish
 
-GitHub Actions workflow `.github/workflows/static.yml` builds the public job-description PDF, assembles the allowlisted site, runs the complete responsive/public-site QA suite, and deploys only the verified artifact to GitHub Pages. Pages is configured with `build_type: workflow`. `_config.yml` excludes review and development artifacts if branch/Jekyll mode is ever re-enabled. Do not add broad `git add .` deploy flows or use repository-root Pages publishing.
+GitHub Actions workflow `.github/workflows/static.yml` assembles the allowlisted site, runs the complete responsive/public-site QA suite, and deploys only the verified artifact to GitHub Pages. The former applicant job-description PDF is not included in public output while there are no openings. Pages is configured with `build_type: workflow`. `_config.yml` excludes review and development artifacts if branch/Jekyll mode is ever re-enabled. Do not add broad `git add .` deploy flows or use repository-root Pages publishing.
 
 Run locally from the repository root:
 
 ```powershell
 python -m pip install -r .github/site-tools/requirements-ci.txt
-python .github/site-tools/build_public_job_description.py
 python .github/site-tools/build_site.py
 python .github/site-tools/website_qa.py --root dist/public-site
 ```
 
-The QA suite checks 10 viewport widths from 360 through 1920 px; route/asset/link integrity; the intake and questionnaire; the Careers, PDF and Indeed journey; Partners; mobile menu and Privacy Policy access; console and page errors; accessibility basics; and inactive Jotform safeguards.
+The QA suite checks 11 viewport widths from 320 through 1920 px; route/asset/link integrity; intake and questionnaire pathways; the no-openings Careers status and absence of active application links; holiday dates and office-hours placement; Partners; mobile menu and Privacy Policy access; console and page errors; accessibility basics; and inactive Jotform safeguards.
 
 ## Release archive and rollback
 
