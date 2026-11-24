@@ -29,7 +29,7 @@ Edit `housing-insights/housing-insights-data.json` to add, revise, or remove a s
 
 ## Public business information
 
-The contact section in `index.html` is the source for business contact details: (406) 219-7035, fax (406) 540-7982, `info@anchorsupportservice.com`, Monday through Friday, 8:00 AM?5:00 PM by appointment only, and the Missoula office at 3010 Santa Fe Ct, Suite 228. The temporary holiday notice is in `#holiday-office-closures`; review and remove it after January 1, 2027. The mailing address is PO Box 17021, 3150 Great Northern Loop, Missoula, Montana 59808-7021. Verify factual changes with the owner before publishing them.
+The contact section in `index.html` is the source for business contact details: (406) 219-7035, fax (406) 540-7982, `info@anchorsupportservice.com`, Monday through Friday, 8:00 AM?5:00 PM by appointment only, and the Missoula office at 3010 Santa Fe Ct, Suite 208. The temporary holiday notice is in `#holiday-office-closures`; review and remove it after January 1, 2027. The mailing address is PO Box 17021, 3150 Great Northern Loop, Missoula, Montana 59808-7021. Verify factual changes with the owner before publishing them.
 
 ## Careers, partners and intake
 
