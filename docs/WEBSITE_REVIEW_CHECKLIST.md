@@ -9,6 +9,8 @@ Use this checklist for every proposed production release. Save dated desktop and
 - [ ] Telephone contact and intake steps are visible and accurate.
 - [ ] Appointment-only office details, business contact information, and dated holiday closure notice are accurate; remove the temporary notice after January 1, 2027.
 - [ ] Services, eligibility, resources and Partners link preserve approved scope and disclaimers.
+- [ ] Housing Insights figures show their geography and reporting period, link to primary sources, and label developing projects as planned; no Anchor outcomes are implied.
+- [ ] Housing Insights source links, last-updated date, TSS scope and mobile card layout are current and readable.
 - [ ] Careers navigation works; the no-current-openings notice is correct and no application CTA or vacancy metadata is public.
 - [ ] Privacy Policy is linked in navigation/footer and reads correctly.
 - [ ] Secure paperwork explains the Step 1 → review → directed Step 2 sequence and says online signing is unavailable unless explicitly verified and activated.

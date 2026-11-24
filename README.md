@@ -5,12 +5,15 @@ This repository contains the public static website for Anchor Support Service LL
 ## Public pages
 
 - Home: `/`
+- Housing insights and community progress: `/housing-insights/`
 - Careers: `/careers/`
 - Privacy Policy (canonical): `/policy.html`
 - Legacy Privacy Policy URL: `/privacy-policy.html` redirects to `/policy.html`
 - Secure paperwork status: `/secure-paperwork.html`
 
 The Careers page currently announces that Anchor is not hiring or accepting new employment applications. The previous applicant job-description PDF and its generator remain in the repository but are excluded from the published site while applications are closed. New-client inquiries are open; secure online Jotform signing remains unavailable.
+
+Housing Insights is generated from `housing-insights/housing-insights-data.json` and `housing-insights/page-template.html` by `.github/site-tools/build_housing_insights.py`. Update its `lastUpdated` value only after editorial review. Its source list is curated, not an automatic feed.
 
 ## Local website QA
 

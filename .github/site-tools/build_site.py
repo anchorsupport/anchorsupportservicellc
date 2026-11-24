@@ -5,6 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 import shutil
 
+from build_housing_insights import build_page
+
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "dist" / "public-site"
@@ -20,6 +22,7 @@ PUBLIC_FILES = (
     "secure-paperwork.html",
     "careers/index.html",
     "partners/index.html",
+    "housing-insights/index.html",
     "waivertrack/index.html",
     "styles.css",
     "script.js",
@@ -33,10 +36,11 @@ PUBLIC_FILES = (
     "scotty-housing-navigator.jpg",
     "scotty-housing-navigator pic.jpg",
 )
+GENERATED_FILES = {"housing-insights/index.html"}
 
 
 def main() -> None:
-    missing = [rel for rel in PUBLIC_FILES if not (ROOT / rel).is_file()]
+    missing = [rel for rel in PUBLIC_FILES if rel not in GENERATED_FILES and not (ROOT / rel).is_file()]
     if missing:
         raise SystemExit("Missing required public files: " + ", ".join(missing))
 
@@ -60,10 +64,17 @@ def main() -> None:
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for rel in PUBLIC_FILES:
+        if rel in GENERATED_FILES:
+            continue
         source = ROOT / rel
         target = OUTPUT / rel
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
+    build_page(
+        ROOT / "housing-insights" / "housing-insights-data.json",
+        ROOT / "housing-insights" / "page-template.html",
+        OUTPUT / "housing-insights" / "index.html",
+    )
     # This standard Pages marker also identifies a prior generated directory.
     (OUTPUT / ".nojekyll").touch()
     actual = {path.relative_to(OUTPUT).as_posix() for path in OUTPUT.rglob("*") if path.is_file()}

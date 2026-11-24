@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Verified Missoula and Montana housing statistics, community developments, and information about Tenancy Support Services." />
+  <meta name="theme-color" content="#00335f" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://anchorsupportservice.com/housing-insights/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Housing Insights &amp; Community Impact | Anchor Support Service LLC" />
+  <meta property="og:description" content="Explore verified Missoula and Montana housing statistics, community progress, and tenancy support information." />
+  <meta property="og:url" content="https://anchorsupportservice.com/housing-insights/" />
+  <meta property="og:image" content="https://anchorsupportservice.com/anchor-logo.png" />
+  <meta property="og:site_name" content="Anchor Support Service LLC" />
+  <title>Housing Insights &amp; Community Impact | Anchor Support Service LLC</title>
+  <link rel="icon" href="/anchor-favicon.png" type="image/png" sizes="256x256" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a class="brand" href="/#home" aria-label="Anchor Support Service LLC home">
+        <picture><source srcset="/anchor-logo-display.webp" type="image/webp" /><img class="site-logo" src="/anchor-logo.png" width="1254" height="1254" decoding="async" alt="Anchor Support Service LLC logo" /></picture>
+        <div class="brand-text"><strong>Anchor Support Service LLC</strong><small>Tenancy Support Services</small></div>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-controls="primary-navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+        <a href="/#home">Home</a>
+        <a href="/#services">Services</a>
+        <a href="/#eligibility">Eligibility</a>
+        <a href="/#support">Who We Support</a>
+        <a href="/#resources">Resources</a>
+        <a href="/housing-insights/" aria-current="page">Housing Insights</a>
+        <a href="/#contact">Contact</a>
+        <a href="/partners/">Partners</a>
+        <a href="/careers/">Careers</a>
+        <a href="/policy.html">Privacy Policy</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" class="housing-insights-page">
+    <section class="insights-hero" aria-labelledby="page-title">
+      <div class="container insights-hero-inner">
+        <p class="eyebrow">Missoula and Montana</p>
+        <h1 id="page-title">Housing Insights &amp; Community Impact</h1>
+        <p class="insights-lead">Stable housing is more than a place to live. It is a foundation for health, independence, and opportunity.</p>
+        <p>Across Montana, individuals and families continue to face housing costs, limited affordable options, and barriers to maintaining stable housing. Informed communities are better equipped to understand these challenges and support meaningful solutions. Explore selected housing statistics, community developments, and progress toward housing stability.</p>
+        <p class="insights-updated">Last updated: <time datetime="{{LAST_UPDATED}}">{{LAST_UPDATED_DISPLAY}}</time></p>
+      </div>
+    </section>
+
+    <section class="section section-white" aria-labelledby="numbers-title">
+      <div class="container">
+        <div class="section-header section-heading">
+          <p class="eyebrow">Local context</p>
+          <h2 id="numbers-title">Housing by the Numbers</h2>
+          <p>These figures describe different measures and periods. They are not directly comparable; each card links to its original source and states its scope.</p>
+        </div>
+        <div class="insight-grid insight-stat-grid">
+          {{STATISTICS}}
+        </div>
+        <p class="insight-method-note">Point-in-Time counts are one-night snapshots and can miss people experiencing homelessness. Housing placements and cost-burden measures use different definitions and reporting methods.</p>
+      </div>
+    </section>
+
+    <section class="section section-alt" aria-labelledby="progress-title">
+      <div class="container">
+        <div class="section-header section-heading">
+          <p class="eyebrow">Community response</p>
+          <h2 id="progress-title">Progress Toward Housing Stability</h2>
+          <p>Housing challenges are serious, and communities are working on practical responses. The examples below are reported by other organizations; they are not Anchor outcomes.</p>
+        </div>
+        <div class="insight-grid insight-progress-grid">
+          {{PROGRESS}}
+        </div>
+        <article class="anchor-impact-card" aria-labelledby="anchor-impact-title">
+          <h3 id="anchor-impact-title">Our Impact at Anchor</h3>
+          <details>
+            <summary>How we plan to share verified impact information</summary>
+            <p>We will share company-level outcomes only after the information has been verified and reviewed for privacy. We will not publish personally identifying client details or individual stories without appropriate authorization and privacy review.</p>
+          </details>
+          <p>Anchor Support Service LLC is committed to supporting individuals in overcoming housing barriers and working toward long-term housing stability. As our services continue to grow, we look forward to sharing verified information about our community impact.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section-white" aria-labelledby="news-title">
+      <div class="container">
+        <div class="section-header section-heading">
+          <p class="eyebrow">Curated reading</p>
+          <h2 id="news-title">Montana Housing News &amp; Developments</h2>
+          <p>A selection of recent reporting and public updates. This is an editorial list, not a live news feed.</p>
+        </div>
+        <div class="insight-grid insight-article-grid">
+          {{ARTICLES}}
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" aria-labelledby="tss-title">
+      <div class="container tss-explainer">
+        <div class="section-header section-heading">
+          <p class="eyebrow">About the service</p>
+          <h2 id="tss-title">Why Tenancy Support Services Matter</h2>
+          <p>For eligible Montana Medicaid members, Tenancy Support Services may help address barriers to obtaining or maintaining housing. Depending on assessed needs, an authorized service plan, and program requirements, support may include identifying housing barriers, developing a housing plan, assistance with housing searches and applications, communication with landlords, connection to community resources, tenant education, and follow-up related to housing stability.</p>
+        </div>
+        <p>Montana DPHHS describes these services in its <a href="https://dphhs.mt.gov/HeartInitiative/TenancySupportServices" target="_blank" rel="noopener noreferrer">Tenancy Support Services overview</a> and <a href="https://dphhs.mt.gov/assets/BHDD/HeartWaiver/605_TSS-TSS_eff.1.1.25.pdf" target="_blank" rel="noopener noreferrer">TSS policy</a>. Service availability and authorization depend on applicable eligibility, assessment, planning, and program review. Anchor does not directly provide ongoing rental subsidies or shelter and cannot guarantee housing placement or authorization.</p>
+        <a class="button button-primary" href="/#services">Explore Anchor Services</a>
+        <a class="button button-link" href="/#contact">Contact Anchor</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div><h3>Anchor Support Service LLC</h3><p>Housing-related support and tenancy support services in Missoula, Montana.</p></div>
+      <div><h4>Site Navigation</h4><nav class="footer-nav" aria-label="Footer navigation">
+        <a href="/#home">Home</a><a href="/#about">About</a><a href="/#services">Services</a><a href="/#eligibility">Eligibility</a><a href="/#team">Our Team</a><a href="/#support">Who We Support</a><a href="/#resources">Resources</a><a href="/housing-insights/" aria-current="page">Housing Insights</a><a href="/#contact">Contact</a><a href="/partners/">Partners</a><a href="/careers/">Careers</a><a href="/policy.html">Privacy Policy</a>
+      </nav></div>
+      <div><h4>Contact</h4><p>Phone: <a href="tel:4062197035">(406) 219-7035</a></p><p>Email: <a href="mailto:info@anchorsupportservice.com">info@anchorsupportservice.com</a></p><p>Hours: Monday-Friday, 8:00 AM-5:00 PM</p><p><strong>Office (by appointment only):</strong><br />3010 Santa Fe Ct, Suite 208<br />Missoula, Montana</p></div>
+    </div>
+    <div class="footer-bar"><p>&copy; 2026 Anchor Support Service LLC. All rights reserved.</p></div>
+  </footer>
+  <script src="/script.js" defer></script>
+</body>
+</html>

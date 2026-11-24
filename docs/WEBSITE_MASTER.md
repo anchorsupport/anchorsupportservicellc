@@ -11,6 +11,7 @@ The `main` branch of `anchorsupport/anchorsupportservicellc` is the source of tr
 | Logo, favicon, founder photo and public service photos | `anchor-logo.png`, `anchor-logo-display.webp`, `anchor-favicon.png`, `alex-ceo-picture.png`, `alex-ceo-picture-display.webp`, `scotty-housing-navigator.jpg`, `scotty-housing-navigator pic.jpg` |
 | Careers status announcement | `careers/index.html`; the homepage no-openings callout is in `index.html`; the previous applicant PDF is retained in the repository but excluded from the public-site allowlist while applications are closed. |
 | Landlord and community partner information | `partners/index.html` |
+| Curated housing data, community progress, and public reporting | `housing-insights/housing-insights-data.json`, `housing-insights/page-template.html`, generated as `housing-insights/index.html` by `.github/site-tools/build_housing_insights.py` |
 | Privacy policy and its compatibility route | `policy.html`, `privacy-policy.html` |
 | Telephone inquiry and two-step paperwork instructions | `secure-paperwork.html` |
 | WaiverTrack public landing route | `waivertrack/index.html`; do not change the protected application/authentication from this public-site master |
@@ -20,7 +21,11 @@ The `main` branch of `anchorsupport/anchorsupportservicellc` is the source of tr
 
 ## Approved navigation and branding
 
-The shared primary navigation is Home, Services, Eligibility, Who We Support, Resources, Contact, Partners, Careers, and Privacy Policy. Keep existing section IDs and routes so bookmarks continue to work. The footer repeats important section, Careers, Partners, Privacy Policy, and contact links. The visual identity uses Anchor navy (`#00335f`), teal (`#0c747d`), bright teal (`#2fc7bf`), coral (`#f25f4c`), gold (`#e9a93a`), and cream backgrounds. Preserve the existing Anchor logo and image appearance; display WebP derivatives are for the website while original assets remain available for print/PDF source use.
+The shared primary navigation is Home, Services, Eligibility, Who We Support, Resources, Housing Insights, Contact, Partners, Careers, and Privacy Policy. Keep existing section IDs and routes so bookmarks continue to work. The footer repeats important section, Careers, Partners, Privacy Policy, and contact links. The visual identity uses Anchor navy (`#00335f`), teal (`#0c747d`), bright teal (`#2fc7bf`), coral (`#f25f4c`), gold (`#e9a93a`), and cream backgrounds. Preserve the existing Anchor logo and image appearance; display WebP derivatives are for the website while original assets remain available for print/PDF source use.
+
+## Housing Insights updates
+
+Edit `housing-insights/housing-insights-data.json` to add, revise, or remove a statistic, progress example, or curated article. Keep the existing field names, include a public HTTPS source URL and a precise geography/reporting period, and set `lastVerified` only after checking the source. For articles, preserve the publication date and write an original short summary. `lastUpdated` is the editorial review date: change it only when the page's content is actually reviewed or updated. The Python builder validates dates and HTTPS links, escapes content, and generates static HTML; it does not fetch or scrape remote sources. Run the normal build and QA commands after editing. Do not add client metrics until they are verified and privacy-reviewed.
 
 ## Public business information
 
